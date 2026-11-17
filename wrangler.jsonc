@@ -1,0 +1,14 @@
+// Déploiement sur Cloudflare Workers : site 100 % statique, aucun code serveur.
+// Cloudflare lance `npm run build`, puis `npx wrangler deploy` envoie dist/.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "pcrgravier",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./dist",
+    // /parpaillon → /parpaillon/ comme sur l'ancien WordPress
+    "html_handling": "force-trailing-slash",
+    // pages inconnues → dist/404.html
+    "not_found_handling": "404-page"
+  }
+}
