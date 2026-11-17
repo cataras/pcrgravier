@@ -1,0 +1,23 @@
+---
+import Base from '../../../layouts/Base.astro';
+import ArticleGrid from '../../../components/ArticleGrid.astro';
+import { getArticles, authorSlug } from '../../../lib/site';
+
+export async function getStaticPaths() {
+  const articles = await getArticles();
+  const names = [...new Set(articles.map((a) => a.data.author).filter(Boolean))] as string[];
+  return names.map((name) => ({
+    params: { author: authorSlug(name)! },
+    props: { name, articles: articles.filter((a) => a.data.author === name) },
+  }));
+}
+const { name, articles } = Astro.props;
+---
+
+<Base title={name} description={`Articles de ${name}`}>
+  <header class="list-header">
+    <p class="kicker">Auteur</p>
+    <h1>{name}</h1>
+  </header>
+  <ArticleGrid articles={articles} />
+</Base>

@@ -1,0 +1,23 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import ArticleGrid from '../components/ArticleGrid.astro';
+import Pagination from '../components/Pagination.astro';
+import hero from '../assets/site/hero.jpg';
+import { SITE, PAGE_SIZE, getArticles } from '../lib/site';
+
+const articles = await getArticles();
+const last = Math.ceil(articles.length / PAGE_SIZE);
+---
+
+<Base image={hero} overlayHeader>
+  <section class="hero hero-home">
+    <Image src={hero} alt="Deux cyclistes sur une piste de gravier en montagne" layout="full-width" loading="eager" fetchpriority="high" />
+    <div class="hero-content">
+      <h1 class="visually-hidden">{SITE.title}</h1>
+      <p class="hero-quote">{SITE.quote}</p>
+    </div>
+  </section>
+  <ArticleGrid articles={articles.slice(0, PAGE_SIZE)} featureFirst />
+  <Pagination current={1} last={last} />
+</Base>

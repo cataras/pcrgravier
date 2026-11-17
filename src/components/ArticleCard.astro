@@ -1,0 +1,30 @@
+---
+import { Image } from 'astro:assets';
+import { slugify, type Article } from '../lib/site';
+
+interface Props {
+  article: Article;
+  large?: boolean;
+  eager?: boolean;
+}
+const { article, large = false, eager = false } = Astro.props;
+const { title, cover, categories } = article.data;
+const category = categories[0];
+---
+
+<article class:list={['card', { large }]}>
+  {cover && (
+    <Image
+      src={cover}
+      alt=""
+      widths={large ? [640, 960, 1400] : [480, 720, 960]}
+      sizes={large ? '(max-width: 760px) 100vw, 50vw' : '(max-width: 760px) 100vw, 33vw'}
+      layout="full-width"
+      loading={eager ? 'eager' : 'lazy'}
+    />
+  )}
+  <div class="card-body">
+    {category && <a class="pill" href={`/category/${slugify(category)}/`}>{category}</a>}
+    <h2><a href={`/${article.id}/`}>{title}</a></h2>
+  </div>
+</article>

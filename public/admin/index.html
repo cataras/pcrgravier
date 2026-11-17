@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Édition – PCR Gravier</title>
+    <link rel="icon" href="/favicon.jpg" />
+  </head>
+  <body>
+    <script src="https://unpkg.com/@sveltia/cms@0.255.1/dist/sveltia-cms.js"></script>
+    <script>
+      // Boutons « Carte » et « Vidéo » dans le menu Insérer de l'éditeur.
+      // Ils écrivent simplement l'adresse seule sur une ligne : c'est le site
+      // qui la transforme en carte RideWithGPS / Strava ou en lecteur vidéo.
+      CMS.registerEditorComponent({
+        id: 'carte',
+        label: 'Carte (RideWithGPS, Strava)',
+        icon: 'map',
+        mode: 'dialog',
+        summary: 'Carte : {{url}}',
+        fields: [
+          {
+            name: 'url',
+            label: 'Adresse du parcours ou de la sortie',
+            widget: 'string',
+            hint: 'Par exemple https://ridewithgps.com/routes/12345678 ou https://www.strava.com/activities/12345678',
+            pattern: ['^https://(www\\.)?(ridewithgps|strava)\\.com/\\S+$', 'Adresse RideWithGPS ou Strava attendue'],
+          },
+        ],
+        pattern: /^(?<url>https:\/\/(?:www\.)?(?:ridewithgps|strava)\.com\/\S+)$/m,
+        toBlock: ({ url }) => url || '',
+      });
+
+      CMS.registerEditorComponent({
+        id: 'video',
+        label: 'Vidéo (Vimeo, YouTube)',
+        icon: 'movie',
+        mode: 'dialog',
+        summary: 'Vidéo : {{url}}',
+        fields: [
+          {
+            name: 'url',
+            label: 'Adresse de la vidéo',
+            widget: 'string',
+            hint: 'Par exemple https://vimeo.com/123456789 ou https://www.youtube.com/watch?v=…',
+            pattern: ['^https://(www\\.|player\\.|m\\.)?(vimeo\\.com|youtube\\.com|youtu\\.be)/\\S+$', 'Adresse Vimeo ou YouTube attendue'],
+          },
+        ],
+        pattern: /^(?<url>https:\/\/(?:www\.|player\.|m\.)?(?:vimeo\.com|youtube\.com|youtu\.be)\/\S+)$/m,
+        toBlock: ({ url }) => url || '',
+      });
+    </script>
+  </body>
+</html>

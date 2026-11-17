@@ -1,0 +1,15 @@
+---
+import ArticleCard from './ArticleCard.astro';
+import type { Article } from '../lib/site';
+
+interface Props {
+  articles: Article[];
+  /** Les deux premiers articles en grand (page d'accueil) */
+  featureFirst?: boolean;
+}
+const { articles, featureFirst = false } = Astro.props;
+---
+
+<div class="grid">
+  {articles.map((a, i) => <ArticleCard article={a} large={featureFirst && i < 2} eager={i < 2} />)}
+</div>

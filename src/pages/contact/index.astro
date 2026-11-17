@@ -1,0 +1,37 @@
+---
+/**
+ * Formulaire de contact sans serveur.
+ *
+ * Les messages passent par Web3Forms (gratuit) qui les renvoie par e-mail.
+ * Pour l'activer : créer une clé sur https://web3forms.com avec l'adresse
+ * du collectif, puis la mettre dans PUBLIC_WEB3FORMS_KEY (fichier .env).
+ * Sans clé, la page propose simplement d'écrire directement par e-mail.
+ */
+import Base from '../../layouts/Base.astro';
+import { SITE } from '../../lib/site';
+
+const key = import.meta.env.PUBLIC_WEB3FORMS_KEY;
+---
+
+<Base title="Contact" description="Écrire au collectif PCR Gravier">
+  <header class="list-header">
+    <h1>Contact</h1>
+  </header>
+  <div class="prose">
+    <p>Une question, une idée de trace, une envie de rouler avec nous ? Écris-nous.</p>
+    {key ? (
+      <form class="contact-form" action="https://api.web3forms.com/submit" method="POST">
+        <input type="hidden" name="access_key" value={key} />
+        <input type="hidden" name="subject" value="Nouveau message depuis pcrgravier.cc" />
+        <input type="hidden" name="redirect" value={new URL('/contact/merci/', Astro.site).href} />
+        <input type="checkbox" name="botcheck" class="visually-hidden" tabindex="-1" autocomplete="off" />
+        <label>Nom<input type="text" name="name" required autocomplete="name" /></label>
+        <label>E-mail<input type="email" name="email" required autocomplete="email" /></label>
+        <label>Message<textarea name="message" rows="7" required></textarea></label>
+        <button type="submit">Envoyer</button>
+      </form>
+    ) : (
+      <p><a class="button" href={`mailto:${SITE.email}`}>{SITE.email}</a></p>
+    )}
+  </div>
+</Base>

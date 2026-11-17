@@ -1,0 +1,22 @@
+---
+import Base from '../../../layouts/Base.astro';
+import ArticleGrid from '../../../components/ArticleGrid.astro';
+import { getArticles, getCategories, slugify } from '../../../lib/site';
+
+export async function getStaticPaths() {
+  const articles = await getArticles();
+  return (await getCategories()).map((c) => ({
+    params: { category: c.slug },
+    props: { name: c.name, articles: articles.filter((a) => a.data.categories.some((x) => slugify(x) === c.slug)) },
+  }));
+}
+const { name, articles } = Astro.props;
+---
+
+<Base title={name} description={`Articles de la catégorie ${name}`}>
+  <header class="list-header">
+    <p class="kicker">Catégorie</p>
+    <h1>{name}</h1>
+  </header>
+  <ArticleGrid articles={articles} />
+</Base>

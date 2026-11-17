@@ -1,0 +1,121 @@
+# Sveltia CMS — interface d'édition du site PCR Gravier
+# Documentation : https://sveltiacms.app/en/docs
+
+backend:
+  name: github
+  repo: cataras/pcrgravier
+  branch: main
+  commit_messages:
+    create: 'Nouvel article : {{slug}}'
+    update: 'Mise à jour : {{slug}}'
+    delete: 'Suppression : {{slug}}'
+    uploadMedia: 'Ajout de média : {{path}}'
+    deleteMedia: 'Suppression de média : {{path}}'
+
+# Les photos sont rangées dans src/assets/uploads, puis optimisées par Astro
+# au moment de la construction du site. Le chemin écrit dans les articles
+# est relatif (../../assets/uploads/…) pour qu'Astro les retrouve : c'est
+# réglé collection par collection (chemin relatif au fichier de l'article).
+media_folder: src/assets/uploads
+public_folder: /src/assets/uploads
+
+media_libraries:
+  default:
+    config:
+      # Réduit les photos trop lourdes dès l'envoi (2400 px max)
+      transformations:
+        raster_image:
+          format: webp
+          quality: 90
+          width: 2400
+          height: 2400
+      slugify_filename: true
+
+slug:
+  encoding: ascii
+  clean_accents: true
+
+collections:
+  - name: articles
+    label: Articles
+    label_singular: Article
+    description: Récits d'aventures, escapades, matos et bricolages.
+    folder: src/content/articles
+    extension: md
+    format: frontmatter
+    create: true
+    media_folder: ../../assets/uploads
+    public_folder: ../../assets/uploads
+    slug: '{{slug}}'
+    summary: '{{title}} — {{date | date("DD/MM/YYYY")}}'
+    thumbnail: cover
+    sortable_fields:
+      fields: [date, title]
+      default:
+        field: date
+        direction: descending
+    view_filters:
+      - label: Brouillons
+        field: draft
+        pattern: true
+    view_groups:
+      - label: Année
+        field: date
+        pattern: \d{4}
+    fields:
+      - name: title
+        label: Titre
+        widget: string
+      - name: date
+        label: Date de publication
+        widget: datetime
+        default: '{{now}}'
+      - name: author
+        label: Auteur
+        widget: string
+        required: false
+        hint: Prénom et nom, par exemple « Julien Sommier ».
+      - name: categories
+        label: Catégories
+        widget: select
+        multiple: true
+        min: 1
+        options: [Aventure, Escapade, Gear, Hack, Photo Dump]
+      - name: cover
+        label: Photo de couverture
+        widget: image
+        required: false
+        hint: Affichée en grand en haut de l'article et sur la page d'accueil.
+      - name: draft
+        label: Brouillon
+        widget: boolean
+        default: false
+        required: false
+        hint: Un brouillon n'apparaît pas sur le site publié.
+      - name: body
+        label: Contenu
+        widget: markdown
+        hint: >-
+          Plusieurs photos insérées à la suite forment automatiquement une galerie.
+          Pour une carte ou une vidéo, utiliser le menu « Insérer » ou coller
+          l'adresse seule sur une ligne.
+
+  - name: pages
+    label: Pages
+    media_folder: ../../assets/uploads
+    public_folder: ../../assets/uploads
+    files:
+      - name: a-propos
+        label: À propos
+        file: src/content/pages/a-propos.md
+        fields:
+          - { name: title, label: Titre, widget: string }
+          - { name: cover, label: Photo de couverture, widget: image, required: false }
+          - { name: body, label: Contenu, widget: markdown }
+      - name: videos
+        label: Vidéos
+        file: src/content/pages/videos.md
+        fields:
+          - { name: title, label: Titre, widget: string }
+          - { name: cover, label: Photo de couverture, widget: image, required: false }
+          - { name: body, label: Contenu, widget: markdown }

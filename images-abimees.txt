@@ -1,0 +1,48 @@
+recuperation/uploads/2018/10/cordel-cycling-bikepacking-bags-bike-2-of-2.jpg	VipsJpeg: premature end of JPEG image
+recuperation/uploads/2018/10/cordel-cycling-bikepacking-bags-biketool-2-of-2.jpg	VipsJpeg: premature end of JPEG image
+recuperation/uploads/2018/10/grande-travers%C3%A9e-ard%C3%A9choise10.jpg	VipsJpeg: premature end of JPEG image
+recuperation/uploads/2018/10/grande-travers%C3%A9e-ard%C3%A9choise45.jpg	VipsJpeg: Corrupt JPEG data: found marker 0xd9 instead of RST7
+recuperation/uploads/2018/11/arles-marseille-gravel_02.jpeg	VipsJpeg: premature end of JPEG image
+recuperation/uploads/2018/11/arles-marseille-gravel_05.jpeg	Unknown error
+recuperation/uploads/2018/11/arles-marseille-gravel_09.jpeg	VipsJpeg: premature end of JPEG image
+recuperation/uploads/2018/11/arles-marseille-gravel_16.jpeg	VipsJpeg: premature end of JPEG image
+recuperation/uploads/2018/11/arles-marseille-gravel_17.jpeg	VipsJpeg: Corrupt JPEG data: found marker 0xd9 instead of RST5
+recuperation/uploads/2018/11/arles-marseille-gravel_19.jpeg	VipsJpeg: premature end of JPEG image
+recuperation/uploads/2018/11/arles-marseille-gravel_23.jpeg	VipsJpeg: premature end of JPEG image
+recuperation/uploads/2018/11/arles-marseille-gravel_24.jpeg	VipsJpeg: Corrupt JPEG data: found marker 0xd9 instead of RST5
+recuperation/uploads/2018/11/arles-marseille-gravel_27.jpeg	VipsJpeg: premature end of JPEG image
+recuperation/uploads/2018/11/arles-marseille-gravel_32.jpeg	VipsJpeg: Corrupt JPEG data: found marker 0xd9 instead of RST2
+recuperation/uploads/2019/01/bikepacking-gravel-marseille-12.jpg	VipsJpeg: premature end of JPEG image
+recuperation/uploads/2019/01/bikepacking-gravel-marseille-82.jpg	VipsJpeg: premature end of JPEG image
+recuperation/uploads/2019/01/bikepacking-gravel-marseille-83.jpg	VipsJpeg: Corrupt JPEG data: found marker 0xd9 instead of RST5
+recuperation/uploads/2019/10/born-to-ride_104.jpeg	VipsJpeg: premature end of JPEG image
+recuperation/uploads/2019/10/born-to-ride_107.jpeg	VipsJpeg: premature end of JPEG image
+recuperation/uploads/2019/10/born-to-ride_93.jpeg	VipsJpeg: premature end of JPEG image
+recuperation/uploads/2019/10/born_to_ride_2019-10-2.jpeg	VipsJpeg: premature end of JPEG image
+recuperation/uploads/2019/10/born_to_ride_2019-18.jpeg	VipsJpeg: premature end of JPEG image
+recuperation/uploads/2019/10/born_to_ride_2019-19.jpeg	VipsJpeg: premature end of JPEG image
+recuperation/uploads/2019/10/born_to_ride_2019-4.jpg	VipsJpeg: Corrupt JPEG data: found marker 0xd9 instead of RST3
+recuperation/uploads/2019/10/born_to_ride_2019-6-1.jpeg	VipsJpeg: premature end of JPEG image
+recuperation/uploads/2019/10/born_to_ride_2019-6.jpeg	VipsJpeg: premature end of JPEG image
+recuperation/uploads/2019/10/born_to_ride_2019-7-3.jpeg	VipsJpeg: premature end of JPEG image
+recuperation/uploads/2019/10/born_to_ride_2019-7.jpeg	VipsJpeg: Corrupt JPEG data: found marker 0xd9 instead of RST7
+recuperation/uploads/2019/10/born_to_ride_2019-8-2.jpeg	Unknown error
+recuperation/uploads/2019/10/born_to_ride_2019-9-4.jpeg	VipsJpeg: premature end of JPEG image
+recuperation/uploads/2019/11/litespeedt5_gravel_pcr_gravier-1.jpg	Unknown error
+recuperation/uploads/2019/11/litespeedt5_gravel_pcr_gravier-12.jpg	VipsJpeg: premature end of JPEG image
+recuperation/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-105.jpg	VipsJpeg: premature end of JPEG image
+recuperation/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-126.jpg	VipsJpeg: premature end of JPEG image
+recuperation/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-151.jpg	Unknown error
+recuperation/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-163.jpg	VipsJpeg: Corrupt JPEG data: found marker 0xd9 instead of RST5
+recuperation/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-184.jpg	VipsJpeg: premature end of JPEG image
+recuperation/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-206.jpg	VipsJpeg: Corrupt JPEG data: found marker 0xd9 instead of RST2
+recuperation/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-257.jpg	VipsJpeg: premature end of JPEG image
+recuperation/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-275.jpg	Unknown error
+recuperation/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-28.jpg	VipsJpeg: Corrupt JPEG data: found marker 0xd9 instead of RST1
+recuperation/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-284.jpg	VipsJpeg: premature end of JPEG image
+recuperation/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-5.jpg	VipsJpeg: premature end of JPEG image
+recuperation/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-51.jpg	VipsJpeg: premature end of JPEG image
+recuperation/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-65.jpg	VipsJpeg: premature end of JPEG image
+recuperation/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-70.jpg	VipsJpeg: premature end of JPEG image
+recuperation/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-75.jpg	VipsJpeg: premature end of JPEG image
+recuperation/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-86.jpg	VipsJpeg: premature end of JPEG image
