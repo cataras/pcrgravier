@@ -1,0 +1,11 @@
+# Redirections lues par Cloudflare Pages (et Netlify).
+# Ancien flux RSS WordPress
+/feed/        /rss.xml   301
+/feed         /rss.xml   301
+/comments/feed/  /rss.xml  301
+# Pages WordPress supprimées
+/page-d-exemple/       /             301
+/category/non-classe/  /             301
+# Ancienne interface d'administration
+/wp-admin/*   /admin/    302
+/wp-login.php /admin/    302
