@@ -16,7 +16,7 @@ Pendant que le gros de la team PCR Gravier était occupé à casser du gravier d
 
 ![](../../assets/uploads/2018/11/arles-marseille-gravel_02.jpeg)
 
-![](../../assets/uploads/2018/11/arles-marseille-gravel_05.jpeg)
+![](../../assets/uploads/2018/11/arles-marseille-gravel_05-543x407.jpeg)
 
 ![](../../assets/uploads/2018/10/ARL-MRS-No2-OK-3x2-COLORS.jpg)
 
@@ -45,7 +45,7 @@ Le désert de La Crau ? OUI MONSIEUR ! Les Arlésiens appellent ça « l’Enfer
 
 <!-- image manquante : 2018/11/arles-marseille-gravel_14.jpeg -->
 
-![](../../assets/uploads/2018/11/arles-marseille-gravel_19.jpeg)
+![](../../assets/uploads/2018/11/arles-marseille-gravel_19-428x321.jpeg)
 
 ![](../../assets/uploads/2018/11/arles-marseille-gravel_16.jpeg)
 
@@ -57,7 +57,7 @@ Deux ou trois croissants plus tard, on quitte Miramas par des chemins qui nous r
 
 Nous arrivons au kilomètre 100 et jusqu’ici on peut dire que cet itinéraire est plutôt plat. Le dénivelé fait seulement son apparition à l’entrée du plateau de Vitrolles avec un joli casse pattes comme on les aime. **Highlight du parcours, caviar de gravel**. Le plateau de Vitrolles offre des kilomètres de pistes à flanc de falaise pour notre plus grand kiff. La vue sur l’étang de Berre n’est pas idiote non plus et au loin, on distingue le massif de l’Étoile qui sera notre digestif du jour.
 
-![](../../assets/uploads/2018/11/arles-marseille-gravel_24.jpeg)
+![](../../assets/uploads/2018/11/arles-marseille-gravel_24-450x337.jpeg)
 
 ![](../../assets/uploads/2018/11/arles-marseille-gravel_23.jpeg)
 

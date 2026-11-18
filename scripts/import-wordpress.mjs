@@ -75,16 +75,44 @@ for (const root of uploadRoots) {
   }
 }
 
-/** Trouve le meilleur fichier disponible pour un chemin d'upload WordPress. */
+/**
+ * Un fichier est-il complet ? La Wayback Machine ne conserve que le premier
+ * mégaoctet de certaines images : ces JPEG font exactement 1 048 576 octets
+ * et n'ont pas de marqueur de fin (FF D9). Ils s'affichent avec le bas gris.
+ */
+const TRUNCATED_SIZE = 1024 * 1024;
+const completeCache = new Map();
+function isComplete(abs) {
+  if (completeCache.has(abs)) return completeCache.get(abs);
+  const size = fs.statSync(abs).size;
+  let ok = size !== TRUNCATED_SIZE;
+  if (ok && /\.jpe?g$/i.test(abs) && size > 2) {
+    const fd = fs.openSync(abs, 'r');
+    const end = Buffer.alloc(2);
+    fs.readSync(fd, end, 0, 2, size - 2);
+    fs.closeSync(fd);
+    ok = end[0] === 0xff && end[1] === 0xd9;
+  }
+  completeCache.set(abs, ok);
+  return ok;
+}
+
+const largest = (files) => files.reduce((a, b) => (fs.statSync(b).size > fs.statSync(a).size ? b : a));
+
+/**
+ * Trouve le meilleur fichier disponible pour un chemin d'upload WordPress :
+ * la plus grande variante complète, sinon (faute de mieux) une variante tronquée.
+ */
 function resolveImage(rel) {
   rel = rel.replace(/^\/+/, '').replace(/^(?:pcr-wordpress\/)?wp-content\/uploads\//, '');
   const key = cleanName(rel);
-  // Préférer la plus grande variante disponible (souvent l'original)
-  const candidates = byBase.get(baseKey(key)) ?? [];
-  if (candidates.length) {
-    return candidates.reduce((a, b) => (fs.statSync(b).size > fs.statSync(a).size ? b : a));
-  }
-  return exact.get(key) ?? null;
+  const candidates = byBase.get(baseKey(key)) ?? (exact.has(key) ? [exact.get(key)] : []);
+  if (!candidates.length) return null;
+  const complete = candidates.filter(isComplete);
+  if (complete.length) return largest(complete);
+  const abs = largest(candidates);
+  report.truncated.push(`${rel}\t(fichier tronqué : ${path.relative(ROOT, abs)})`);
+  return abs;
 }
 
 const copied = new Map(); // abs source -> chemin relatif dans src/assets/uploads
@@ -152,7 +180,7 @@ function parseFrontmatter(src) {
 
 const yamlStr = (s) => JSON.stringify(s ?? '');
 
-const report = { missing: [], corrupt: [], embeds: 0 };
+const report = { missing: [], corrupt: [], truncated: [], embeds: 0 };
 
 function convertBody(body, slug, depth) {
   const prefix = '../'.repeat(depth) + 'assets/uploads/';
@@ -242,8 +270,7 @@ console.log(`✓ ${nArticles} articles, ${nPages} pages`);
 console.log(`✓ ${copied.size} images copiées dans src/assets/uploads`);
 console.log(`✓ ${report.embeds} intégrations (cartes, vidéos)`);
 console.log(`⚠︎ ${new Set(report.missing).size} images manquantes → ${path.relative(ROOT, missingFile)}`);
-if (report.corrupt.length) {
-  const corruptFile = path.join(SITE, 'images-abimees.txt');
-  fs.writeFileSync(corruptFile, report.corrupt.sort().join('\n') + '\n');
-  console.log(`⚠︎ ${report.corrupt.length} images abîmées (fichier incomplet) → ${path.relative(ROOT, corruptFile)}`);
-}
+const damaged = [...new Set([...report.truncated, ...report.corrupt])].sort();
+const corruptFile = path.join(SITE, 'images-abimees.txt');
+fs.writeFileSync(corruptFile, damaged.join('\n') + (damaged.length ? '\n' : ''));
+console.log(`⚠︎ ${new Set(report.truncated).size} images utilisées sont tronquées (aucune version complète trouvée) → ${path.relative(ROOT, corruptFile)}`);

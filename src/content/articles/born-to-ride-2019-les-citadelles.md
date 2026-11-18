@@ -3,7 +3,7 @@ title: "Born To Ride 2019 - Les Citadelles"
 date: 2019-10-18T08:59:46+00:00
 author: "Sims Teuteul"
 categories: ["Aventure"]
-cover: "../../assets/uploads/2019/10/born_to_ride_2019-3.jpeg"
+cover: "../../assets/uploads/2019/10/born_to_ride_2019-3.jpg"
 ---
 
 « 2 be 3, or not to be ». Au delà d’être le tube douteux d’un groupe de musique plus que douteux, c’est un peu le résumé de notre expérience sur cette [Born To Ride](http://chilkoot-cdp.com/project/btr-2019/).  
@@ -20,11 +20,11 @@ En Octobre dernier avec Arthur nous étions les deux Castors du PCR Gravier à s
 
 Tout démarre à la **citadelle de Montmédy**, il est presque 22h. Hommes, femmes et machines sont affûtés comme jamais et après plusieurs heures à attendre dans le froid et le vent, le départ de cette BTR s’apparente à une délivrance. Nous allons enfin pouvoir rouler, nous réchauffer et surtout mettre un point final à cette (trop) longue période de préparation. On a normalement pensé à tout et **il n’y a plus qu’à rouler, 1200 kilomètres plus au sud vers Ramatuelle, en 120 heures maximum**.
 
-![](../../assets/uploads/2019/10/born_to_ride_2019-3.jpeg)
+![](../../assets/uploads/2019/10/born_to_ride_2019-3.jpg)
 
-![](../../assets/uploads/2019/10/born_to_ride_2019-3.jpeg)
+![](../../assets/uploads/2019/10/born_to_ride_2019-3.jpg)
 
-![](../../assets/uploads/2019/10/born_to_ride_2019-2.jpeg)
+![](../../assets/uploads/2019/10/born_to_ride_2019-2.jpg)
 
 ![](../../assets/uploads/2019/10/born_to_ride_2019-5.jpeg)
 
@@ -42,7 +42,7 @@ L’aventure à commencée. Notre inscription en duo prend tout son sens à ce m
 
 ![](../../assets/uploads/2019/10/born_to_ride_2019-8.jpeg)
 
-![](../../assets/uploads/2019/10/born_to_ride_2019-2.jpeg)
+![](../../assets/uploads/2019/10/born_to_ride_2019-2.jpg)
 
 ![](../../assets/uploads/2019/10/born_to_ride_2019-9.jpeg)
 

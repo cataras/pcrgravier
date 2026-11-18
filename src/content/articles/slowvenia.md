@@ -3,7 +3,7 @@ title: "SLOWVENIA"
 date: 2019-12-04T17:38:33+00:00
 author: "Sims Teuteul"
 categories: ["Aventure"]
-cover: "../../assets/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-136.jpg"
+cover: "../../assets/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-136-1400x800.jpg"
 ---
 
 Partir en road trip avec une bande de potes peut sembler une bonne idée pour la plupart d’entre nous. La franche camaraderie, les cheveux au vent, l’effort collectif, la sensation du travail bien fait, les liens qui se soudent, dans la joie et la bonne humeur.
@@ -39,7 +39,7 @@ Vaste sujet. Mais choix central dans la réussite du trip.
 Pas trop loin pour ne pas trop perdre de temps sur le trajet.  
 Pas trop près pour changer un peu des magazines.
 
-![](../../assets/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-136.jpg)
+![](../../assets/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-136-1400x800.jpg)
 
 Notre choix de la **Slovénie** cette année est mûrement réfléchi.
 
@@ -53,7 +53,7 @@ Déjà, on adore les ours. D’ailleurs, qui n’aime pas les ours ? Francheme
 
 ![](../../assets/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-14.jpg)
 
-![](../../assets/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-5.jpg)
+![](../../assets/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-5-578x868.jpg)
 
 ![](../../assets/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-15-1.jpg)
 
@@ -79,7 +79,7 @@ Pas simple de trouver un équilibre, et cet équilibre s’appelle **GRAVIER**.
 
 ![](../../assets/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-99.jpg)
 
-![](../../assets/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-185-1.jpg)
+![](../../assets/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-185-1-611x407.jpg)
 
 ![](../../assets/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-22-1.jpg)
 
@@ -148,7 +148,7 @@ Alors là pour le coup, loin de nous l’idée de juger les configs des uns et d
 
 ![](../../assets/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-264-1.jpg)
 
-![](../../assets/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-263.jpg)
+![](../../assets/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-263-209x314.jpg)
 
 ![](../../assets/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-262-1.jpg)
 
@@ -170,7 +170,7 @@ Attention tout de même aux excès en tout genre de nourriture locale. Affirmer 
 
 ![](../../assets/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-90-1.jpg)
 
-![](../../assets/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-105.jpg)
+![](../../assets/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-105-209x314.jpg)
 
 ![](../../assets/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-213-1.jpg)
 

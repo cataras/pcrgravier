@@ -45,7 +45,7 @@ Enjoy, share and ride.
 
 ![](../../assets/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-126.jpg)
 
-![](../../assets/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-136.jpg)
+![](../../assets/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-136-1400x800.jpg)
 
 ![](../../assets/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-163.jpg)
 
