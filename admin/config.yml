@@ -188,6 +188,14 @@ collections:
         label: Photo de couverture
         widget: image
         required: false
+      - name: videos
+        label: Ajouter les vidéos des articles
+        widget: boolean
+        default: false
+        required: false
+        hint: >-
+          Affiche sous le texte toutes les vidéos Vimeo ou YouTube publiées dans
+          les articles, de la plus récente à la plus ancienne (page Vidéos).
       - name: draft
         label: Brouillon
         widget: boolean
