@@ -11,7 +11,23 @@
   --measure: 46rem;
   --wide: 72rem;
   --header-h: 5.5rem;
+  --night: #0a0a0a; /* en-tête, menu, fond des photos : noir dans les deux thèmes */
+  --line: #cfcfcf;
   color-scheme: light;
+}
+
+/* Thème sombre, selon le réglage de l'appareil */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #f1f1ee;
+    --text: #c3c3bd;
+    --muted: #8d8d87;
+    --paper: #121212;
+    --soft: #1e1e1d;
+    --accent: #a3b392;
+    --line: #3a3a38;
+    color-scheme: dark;
+  }
 }
 
 *,
@@ -46,16 +62,17 @@ h1, h2, h3, h4 { font-family: var(--font-title); color: var(--ink); line-height:
 
 /* ------------------------------------------------------------ en-tête */
 .site-header {
+  view-transition-name: site-header;
   position: sticky; top: 0; z-index: 50;
   height: var(--header-h);
   display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
   padding: 0 1rem;
-  background: var(--ink);
+  background: var(--night);
   transition: background-color 0.3s;
 }
 .site-header.overlay { position: fixed; inset: 0 0 auto; background: transparent; }
 .site-header.overlay.scrolled,
-body.menu-open .site-header { background: var(--ink); }
+body.menu-open .site-header { background: var(--night); }
 .site-header.overlay:not(.scrolled)::before {
   content: ''; position: absolute; inset: 0 0 -2rem; z-index: -1; pointer-events: none;
   background: linear-gradient(rgb(0 0 0 / 0.45), transparent);
@@ -110,7 +127,7 @@ body.menu-open .site-header { background: var(--ink); }
 .menu {
   position: fixed; inset: var(--header-h) 0 0; z-index: 49;
   display: grid; place-items: center;
-  background: var(--ink);
+  background: var(--night);
 }
 .menu[hidden] { display: none; }
 .menu ul { list-style: none; margin: 0; padding: 0; text-align: center; }
@@ -125,7 +142,7 @@ body.menu-open .site-header { background: var(--ink); }
 .hero {
   position: relative; display: grid; place-items: center;
   min-height: 100svh; overflow: hidden;
-  background: var(--ink); color: #fff; text-align: center;
+  background: var(--night); color: #fff; text-align: center;
 }
 .hero > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .hero::after { content: ''; position: absolute; inset: 0; background: rgb(0 0 0 / 0.35); }
@@ -236,11 +253,11 @@ body.menu-open .site-header { background: var(--ink); }
 .contact-form textarea {
   width: 100%; padding: 0.7rem 0.8rem; font: inherit; font-family: var(--font-body);
   text-transform: none; letter-spacing: normal; color: var(--ink);
-  border: 1px solid #cfcfcf; border-radius: 2px; background: #fff;
+  border: 1px solid var(--line); border-radius: 2px; background: var(--paper);
 }
 button[type='submit'], .button {
   justify-self: start; display: inline-block; padding: 0.75rem 1.8rem; border: 0; border-radius: 2px;
-  background: var(--ink); color: #fff; cursor: pointer; text-decoration: none;
+  background: var(--ink); color: var(--paper); cursor: pointer; text-decoration: none;
   font: 700 0.95rem var(--font-title); text-transform: uppercase; letter-spacing: 0.1em;
 }
 button[type='submit']:hover, .button:hover { background: var(--accent); color: #fff; }
@@ -294,7 +311,8 @@ button[type='submit']:hover, .button:hover { background: var(--accent); color: #
   max-width: var(--measure); margin: 0 auto; padding: 0 1rem 4rem;
   --pagefind-ui-primary: var(--ink);
   --pagefind-ui-text: var(--text);
-  --pagefind-ui-border: #cfcfcf;
+  --pagefind-ui-border: var(--line);
+  --pagefind-ui-background: var(--paper);
   --pagefind-ui-border-radius: 2px;
   --pagefind-ui-tag: var(--soft);
   --pagefind-ui-font: var(--font-body);
@@ -322,13 +340,29 @@ button[type='submit']:hover, .button:hover { background: var(--accent); color: #
 .map-legend span { display: inline-block; width: 0.8rem; height: 0.8rem; margin-right: 0.45rem; border-radius: 50%; vertical-align: -0.05rem; }
 .maplibregl-popup-content { padding: 0; overflow: hidden; border-radius: 4px; }
 .maplibregl-popup-close-button { z-index: 1; width: 1.6rem; height: 1.6rem; font-size: 1.2rem; color: #fff; background: rgb(0 0 0 / 0.35); border-radius: 0 4px 0 4px; }
-.map-tip .maplibregl-popup-content { padding: 0.25rem 0.6rem; font: 700 0.8rem var(--font-title); color: var(--ink); }
+.map-tip .maplibregl-popup-content { padding: 0.25rem 0.6rem; font: 700 0.8rem var(--font-title); color: #0a0a0a; }
 .map-tip .maplibregl-popup-tip { display: none; }
-.map-card { display: block; color: var(--text); text-decoration: none; font: 400 0.85rem/1.45 var(--font-body); }
-.map-card:hover { color: var(--text); }
+.map-card { display: block; color: #454545; text-decoration: none; font: 400 0.85rem/1.45 var(--font-body); }
+.map-card:hover { color: #454545; }
 .map-card img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
 .map-card-body { display: grid; gap: 0.1rem; padding: 0.7rem 0.9rem 0.85rem; }
-.map-card strong { font: 900 1.15rem/1.15 var(--font-title); color: var(--ink); }
+.map-card strong { font: 900 1.15rem/1.15 var(--font-title); color: #0a0a0a; }
 .map-card-cat { font: 700 0.68rem var(--font-title); text-transform: uppercase; letter-spacing: 0.12em; }
 #map:not(.maplibregl-map) { display: grid; place-items: center; }
 #map:not(.maplibregl-map)::after { content: 'Chargement de la carte…'; font: 700 0.8rem var(--font-title); text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); }
+
+/* ------------------------------------------------------------ transitions entre pages
+   (navigateurs récents ; les autres changent de page normalement) */
+@view-transition { navigation: auto; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.25s; }
+::view-transition-group(*) { animation-duration: 0.4s; animation-timing-function: cubic-bezier(0.2, 0.7, 0.2, 1); }
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+}
+
+/* ------------------------------------------------------------ page Vidéos */
+.video-item { margin-top: 4rem; }
+.video-item h2 { margin: 0; font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 900; text-transform: uppercase; }
+.video-item h2 a { text-decoration: none; }
+.video-date { margin: 0.3rem 0 0; font-size: 0.9rem; color: var(--muted); }
+.video-item .embed { margin-top: 1.2rem !important; }

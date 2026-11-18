@@ -50,6 +50,8 @@ const categories = await getCategories();
     <script is:inline>
       var _paq = window._paq = window._paq || [];
       /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+      // sans cookie : pas besoin de bandeau de consentement (exemption CNIL)
+      _paq.push(['disableCookies']);
       _paq.push(['trackPageView']);
       _paq.push(['enableLinkTracking']);
       (function() {

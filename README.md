@@ -110,6 +110,23 @@ dossier `uploads` :
 node scripts/import-wordpress.mjs --uploads ../recuperation/uploads --uploads ../sauvegarde/wp-content/uploads
 ```
 
+## Photos retrouvées
+
+Quand les auteurs renvoient leurs photos d'origine, les déposer dans un dossier
+(sous-dossiers et noms d'origine acceptés) puis lancer :
+
+```bash
+node scripts/reinject-photos.mjs ~/Downloads/photos-julien --dry-run
+node scripts/reinject-photos.mjs ~/Downloads/photos-julien
+```
+
+Le script reconnaît les photos d'après leur nom (sans tenir compte des
+majuscules, de l'extension ni des suffixes WordPress comme « -1024x683 »), les
+remet à leur place dans les articles, rétablit les couvertures perdues,
+remplace les photos abîmées et met à jour `images-manquantes.txt` et
+`images-abimees.txt`. Les photos sont réduites à 2400 px. Il liste à la fin
+les photos qu'il n'a pas su placer.
+
 ⚠︎ Le script réécrit tout `src/content` : à n'utiliser que pendant la
 migration, pas après des retouches manuelles des articles.
 

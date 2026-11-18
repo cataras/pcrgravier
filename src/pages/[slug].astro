@@ -12,6 +12,7 @@ import RideSheet from '../components/RideSheet.astro';
 import { getArticles, getPages, mainCategory, getAuthor, formatDate } from '../lib/site';
 import { getRide } from '../lib/rides';
 import { getRelated } from '../lib/related';
+import { articleVideos, videoUrls } from '../lib/videos';
 
 export async function getStaticPaths() {
   const articles = await getArticles();
@@ -33,13 +34,24 @@ const data = entry.data as { title: string; description?: string; cover?: ImageM
 const category = kind === 'article' ? await mainCategory(entry) : undefined;
 const author = kind === 'article' ? await getAuthor(entry) : undefined;
 const ride = kind === 'article' ? await getRide(entry) : undefined;
+// page « Vidéos » : les vidéos des articles, sauf celles déjà présentes dans le texte de la page
+const videos = kind === 'page' && entry.data.videos ? articleVideos(await getArticles(), videoUrls(entry.body)) : [];
 // Vignette affichée dans les résultats de recherche
 const coverThumb = data.cover ? (await getImage({ src: data.cover, width: 320, format: 'webp' })).src : undefined;
 ---
 
 <Base title={data.title} description={data.description} image={data.cover} overlayHeader>
   <section class:list={['hero', { 'hero-page': kind === 'page' }]}>
-    {data.cover && <Image src={data.cover} alt="" layout="full-width" loading="eager" fetchpriority="high" />}
+    {data.cover && (
+      <Image
+        src={data.cover}
+        alt=""
+        layout="full-width"
+        loading="eager"
+        fetchpriority="high"
+        style={`view-transition-name: cover-${entry.id}`}
+      />
+    )}
     <div class="hero-content">
       {category && <a class="pill" href={`/category/${category.id}/`} data-pagefind-ignore>{category.data.name}</a>}
       <h1>{data.title}</h1>
@@ -58,6 +70,13 @@ const coverThumb = data.cover ? (await getImage({ src: data.cover, width: 320, f
     <h1 class="visually-hidden">{data.title}</h1>
     {data.cover && <img class="visually-hidden" src={coverThumb} alt="" data-pagefind-meta="image[src]" />}
     <Content />
+    {videos.map(({ html, article }) => (
+      <section class="video-item">
+        <h2><a href={`/${article.id}/`}>{article.data.title}</a></h2>
+        <p class="video-date">{formatDate(article.data.date)} · <a href={`/${article.id}/`}>Lire le récit</a></p>
+        <Fragment set:html={html} />
+      </section>
+    ))}
   </article>
 
   {related.length > 0 && (

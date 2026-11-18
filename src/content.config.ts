@@ -90,6 +90,8 @@ const pages = defineCollection({
       /** Texte du lien dans le menu (par défaut : le titre) */
       menuLabel: blank(z.string()),
       menuOrder: z.number().default(50),
+      /** Ajoute sous le texte les vidéos (Vimeo, YouTube) de tous les articles */
+      videos: z.boolean().default(false),
       draft: z.boolean().default(false),
     }),
 });

@@ -21,6 +21,7 @@ const category = await mainCategory(article);
       sizes={large ? '(max-width: 760px) 100vw, 50vw' : '(max-width: 760px) 100vw, 33vw'}
       layout="full-width"
       loading={eager ? 'eager' : 'lazy'}
+      style={`view-transition-name: cover-${article.id}`}
     />
   )}
   <div class="card-body">

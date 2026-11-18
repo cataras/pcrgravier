@@ -11,7 +11,7 @@ import { visit } from 'unist-util-visit';
 
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 
-function embedFor(raw) {
+export function embedFor(raw) {
   let url;
   try {
     url = new URL(raw);
