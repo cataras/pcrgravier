@@ -320,14 +320,15 @@ button[type='submit']:hover, .button:hover { background: var(--accent); color: #
 #map { height: min(75svh, 46rem); background: var(--soft); z-index: 0; }
 .map-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.4rem 1.4rem; list-style: none; margin: 1rem 0 0; padding: 0; font: 700 0.8rem var(--font-title); text-transform: uppercase; letter-spacing: 0.1em; }
 .map-legend span { display: inline-block; width: 0.8rem; height: 0.8rem; margin-right: 0.45rem; border-radius: 50%; vertical-align: -0.05rem; }
-.leaflet-popup-content { margin: 0; width: 15rem !important; }
-.leaflet-popup-content-wrapper { padding: 0; overflow: hidden; border-radius: 4px; }
+.maplibregl-popup-content { padding: 0; overflow: hidden; border-radius: 4px; }
+.maplibregl-popup-close-button { z-index: 1; width: 1.6rem; height: 1.6rem; font-size: 1.2rem; color: #fff; background: rgb(0 0 0 / 0.35); border-radius: 0 4px 0 4px; }
+.map-tip .maplibregl-popup-content { padding: 0.25rem 0.6rem; font: 700 0.8rem var(--font-title); color: var(--ink); }
+.map-tip .maplibregl-popup-tip { display: none; }
 .map-card { display: block; color: var(--text); text-decoration: none; font: 400 0.85rem/1.45 var(--font-body); }
 .map-card:hover { color: var(--text); }
 .map-card img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
 .map-card-body { display: grid; gap: 0.1rem; padding: 0.7rem 0.9rem 0.85rem; }
 .map-card strong { font: 900 1.15rem/1.15 var(--font-title); color: var(--ink); }
 .map-card-cat { font: 700 0.68rem var(--font-title); text-transform: uppercase; letter-spacing: 0.12em; }
-/* relief OpenTopoMap adouci : les tracés colorés ressortent mieux */
-.tiles-relief { filter: saturate(0.3) brightness(1.08) contrast(0.92); }
-.tiles-epure { filter: grayscale(1) brightness(1.08) contrast(0.85); }
+#map:not(.maplibregl-map) { display: grid; place-items: center; }
+#map:not(.maplibregl-map)::after { content: 'Chargement de la carte…'; font: 700 0.8rem var(--font-title); text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); }

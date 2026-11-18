@@ -74,8 +74,11 @@ même adresse qu'un article ou qu'une rubrique du site (`category`, `author`,
   `src/data/traces/` (à committer, pour ne pas dépendre de RideWithGPS à chaque
   build). Si RideWithGPS ne répond pas, l'article s'affiche sans fiche.
 - **Carte** (`/carte/`) : tracé et point de départ de chaque sortie qui a une
-  trace ou des coordonnées (`ride.lat` / `ride.lng`). Fonds OpenTopoMap et
-  OpenStreetMap, gratuits et sans compte. Une couleur par catégorie.
+  trace ou des coordonnées (`ride.lat` / `ride.lng`). Carte vectorielle
+  MapLibre sur fond OpenFreeMap, avec ombrage du relief et courbes de niveau
+  calculés à partir des altitudes publiques AWS Terrain Tiles : gratuit, sans
+  compte ni clé. Une couleur par catégorie. MapLibre (~270 Ko compressés) n'est
+  téléchargé qu'à l'approche de la carte.
 - **À lire aussi** : les trois articles les plus proches géographiquement, puis
   de la même catégorie.
 - **Galeries** : rangées de même hauteur sans recadrage ; le texte alternatif

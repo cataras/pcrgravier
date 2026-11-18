@@ -2,7 +2,11 @@
 /**
  * Carte de toutes les sorties : le tracé et le point de départ de chaque
  * article qui a une trace RideWithGPS ou des coordonnées dans sa fiche.
- * Fond de carte OpenStreetMap / OpenTopoMap : gratuits, sans compte.
+ *
+ * Carte vectorielle MapLibre, à la manière de RideWithGPS, sans compte ni clé :
+ *   - fond clair OpenFreeMap (données OpenStreetMap) ;
+ *   - ombrage du relief et courbes de niveau calculés dans le navigateur à
+ *     partir des altitudes publiques « Terrain Tiles » d'AWS.
  */
 import { getImage } from 'astro:assets';
 import Base from '../layouts/Base.astro';
@@ -55,8 +59,8 @@ const legend = categories
 </Base>
 
 <script>
-  import L from 'leaflet';
-  import 'leaflet/dist/leaflet.css';
+  // MapLibre (~270 Ko compressés) n'est téléchargé qu'à l'approche de la carte :
+  // le reste de la page s'affiche sans l'attendre.
 
   type RidePoint = {
     title: string; href: string; category: string; color: string; thumb: string | null;
@@ -69,65 +73,159 @@ const legend = categories
   const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
   const n = (v: number) => v.toLocaleString('fr-FR');
 
-  const plan = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '© <a href="https://www.openstreetmap.org/copyright">contributeurs OpenStreetMap</a>',
-  });
-  // OpenTopoMap, couleurs atténuées en CSS (.tiles-relief) pour faire ressortir les tracés
-  const relief = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-    maxZoom: 17,
-    className: 'tiles-relief',
-    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, SRTM | style © <a href="https://opentopomap.org">OpenTopoMap</a>',
-  });
-  // Plan OpenStreetMap passé en gris clair (.tiles-epure) : fond très sobre
-  const epure = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    className: 'tiles-epure',
-    attribution: '© <a href="https://www.openstreetmap.org/copyright">contributeurs OpenStreetMap</a>',
-  });
+  async function start() {
+    const [{ default: maplibregl }, { default: mlcontour }] = await Promise.all([
+      import('maplibre-gl'),
+      import('maplibre-contour'),
+      import('maplibre-gl/dist/maplibre-gl.css'),
+    ]);
 
-  const map = L.map(el, { layers: [relief], scrollWheelZoom: false });
-  L.control.layers({ Relief: relief, 'Épuré': epure, Plan: plan }, undefined, { position: 'topright' }).addTo(map);
-  // la molette ne zoome qu'après un clic sur la carte (pour ne pas bloquer le défilement de la page)
-  map.on('click', () => map.scrollWheelZoom.enable());
-  map.on('mouseout', () => map.scrollWheelZoom.disable());
+    // Altitudes publiques (AWS Terrain Tiles) : ombrage + courbes de niveau
+    const dem = new mlcontour.DemSource({
+      url: 'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png',
+      encoding: 'terrarium',
+      maxzoom: 13,
+      worker: true,
+    });
+    dem.setupMaplibre(maplibregl);
 
-  // Vue de départ : le gros des sorties (les voyages lointains restent sur la carte en dézoomant)
-  const median = (xs: number[]) => xs.slice().sort((a, b) => a - b)[Math.floor(xs.length / 2)] ?? 0;
-  const center = L.latLng(median(rides.map((r) => r.lat)), median(rides.map((r) => r.lng)));
-  const bounds = L.latLngBounds([]);
-  for (const r of rides) {
-    const stats = [r.distance && `${n(r.distance)} km`, r.elevation && `${n(r.elevation)} m D+`].filter(Boolean).join(' · ');
-    const popup = `
-      <a class="map-card" href="${esc(r.href)}">
-        ${r.thumb ? `<img src="${esc(r.thumb)}" alt="" />` : ''}
-        <span class="map-card-body">
-          ${r.category ? `<span class="map-card-cat" style="color:${r.color}">${esc(r.category)}</span>` : ''}
-          <strong>${esc(r.title)}</strong>
-          ${stats ? `<span>${stats}</span>` : ''}
-          ${r.place ? `<span>${esc(r.place)}</span>` : ''}
-        </span>
-      </a>`;
-    const group = L.featureGroup();
-    const lines: L.Polyline[] = [];
-    for (const t of r.tracks) {
-      if (t.length > 1) {
-        L.polyline(t, { color: '#fff', weight: 6, opacity: 0.7, interactive: false }).addTo(group);
-        lines.push(L.polyline(t, { color: r.color, weight: 3.5, opacity: 0.95 }).addTo(group));
+    // GeoJSON des tracés et des points de départ ([lat, lng] → [lng, lat])
+    const props = (r: RidePoint, i: number) => ({ i, color: r.color, title: r.title });
+    const lines = {
+      type: 'FeatureCollection',
+      features: rides.flatMap((r, i) =>
+        r.tracks.filter((t) => t.length > 1).map((t) => ({
+          type: 'Feature', properties: props(r, i),
+          geometry: { type: 'LineString', coordinates: t.map(([la, ln]) => [ln, la]) },
+        })),
+      ),
+    } as GeoJSON.FeatureCollection;
+    const starts = {
+      type: 'FeatureCollection',
+      features: rides.map((r, i) => ({ type: 'Feature', properties: props(r, i), geometry: { type: 'Point', coordinates: [r.lng, r.lat] } })),
+    } as GeoJSON.FeatureCollection;
+
+    // Vue de départ : le gros des sorties (les voyages lointains restent visibles en dézoomant)
+    const median = (xs: number[]) => xs.slice().sort((a, b) => a - b)[Math.floor(xs.length / 2)] ?? 0;
+    const c = { lat: median(rides.map((r) => r.lat)), lng: median(rides.map((r) => r.lng)) };
+    const near = (r: RidePoint) => Math.hypot(r.lat - c.lat, (r.lng - c.lng) * Math.cos((c.lat * Math.PI) / 180)) < 13.5;
+    const bounds = new maplibregl.LngLatBounds();
+    for (const r of rides.filter(near)) for (const t of r.tracks) for (const [la, ln] of t) bounds.extend([ln, la]);
+    if (bounds.isEmpty()) bounds.extend([2.5, 46.6]);
+
+    const hash = location.hash.match(/^#(-?[\d.]+),(-?[\d.]+)$/);
+    const map = new maplibregl.Map({
+      container: el,
+      style: 'https://tiles.openfreemap.org/styles/positron',
+      ...(hash ? { center: [+hash[2], +hash[1]] as [number, number], zoom: 11 } : { bounds, fitBoundsOptions: { padding: 30 } }),
+      cooperativeGestures: true, // zoom à deux doigts / Ctrl + molette : la page défile normalement
+      maxZoom: 16,
+      attributionControl: { compact: true, customAttribution: 'Relief : <a href="https://registry.opendata.aws/terrain-tiles/">Terrain Tiles (AWS, SRTM…)</a>' },
+    });
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-left');
+    map.addControl(new maplibregl.ScaleControl({ unit: 'metric' }), 'bottom-left');
+    map.addControl(new maplibregl.FullscreenControl(), 'top-right');
+
+    map.on('load', () => {
+      // noms de lieux en français quand OpenStreetMap les connaît
+      for (const layer of map.getStyle().layers) {
+        if (layer.type === 'symbol' && JSON.stringify(map.getLayoutProperty(layer.id, 'text-field') ?? '').includes('name')) {
+          map.setLayoutProperty(layer.id, 'text-field', ['coalesce', ['get', 'name:fr'], ['get', 'name:latin'], ['get', 'name']]);
+        }
       }
-    }
-    L.circleMarker([r.lat, r.lng], { radius: 7, color: '#fff', weight: 2, fillColor: r.color, fillOpacity: 1 })
-      .bindTooltip(esc(r.title), { direction: 'top', offset: [0, -6] })
-      .addTo(group);
-    group.bindPopup(popup, { maxWidth: 260, minWidth: 220 }).addTo(map);
-    group.on('mouseover', () => lines.forEach((l) => l.setStyle({ weight: 5.5 })));
-    group.on('mouseout', () => lines.forEach((l) => l.setStyle({ weight: 3.5 })));
-    if (center.distanceTo([r.lat, r.lng]) < 1_500_000) bounds.extend(group.getBounds());
+      // les ombrages et courbes passent sous les routes et les noms de lieux
+      const firstRoad = map.getStyle().layers.find((l) => l.id.includes('road') || l.id.includes('highway') || l.type === 'symbol')?.id;
+
+      map.addSource('relief', { type: 'raster-dem', tiles: [dem.sharedDemProtocolUrl], encoding: 'terrarium', tileSize: 256, maxzoom: 13 });
+      map.addLayer({
+        id: 'relief', type: 'hillshade', source: 'relief',
+        paint: {
+          'hillshade-exaggeration': ['interpolate', ['linear'], ['zoom'], 4, 0.25, 10, 0.4, 14, 0.3],
+          'hillshade-shadow-color': '#5c5f66',
+          'hillshade-highlight-color': '#ffffff',
+          'hillshade-accent-color': '#6e7178',
+        },
+      }, firstRoad);
+
+      map.addSource('courbes', {
+        type: 'vector',
+        tiles: [dem.contourProtocolUrl({
+          multiplier: 1,
+          thresholds: { 11: [100, 500], 12: [50, 250], 13: [20, 100], 14: [10, 50] },
+          elevationKey: 'ele', levelKey: 'level', contourLayer: 'contours',
+        })],
+        maxzoom: 15,
+      });
+      map.addLayer({
+        id: 'courbes', type: 'line', source: 'courbes', 'source-layer': 'contours', minzoom: 11,
+        paint: { 'line-color': '#a08a6e', 'line-opacity': ['match', ['get', 'level'], 1, 0.55, 0.25], 'line-width': ['match', ['get', 'level'], 1, 0.9, 0.5] },
+      }, firstRoad);
+      map.addLayer({
+        id: 'courbes-cotes', type: 'symbol', source: 'courbes', 'source-layer': 'contours', minzoom: 12,
+        filter: ['>', ['get', 'level'], 0],
+        layout: { 'symbol-placement': 'line', 'text-field': ['concat', ['number-format', ['get', 'ele'], {}], ' m'], 'text-size': 10, 'text-font': ['Noto Sans Regular'] },
+        paint: { 'text-color': '#8a7559', 'text-halo-color': '#fff', 'text-halo-width': 1.2 },
+      });
+
+      // Tracés : liseré blanc + couleur de la catégorie
+      map.addSource('traces', { type: 'geojson', data: lines });
+      map.addSource('departs', { type: 'geojson', data: starts });
+      map.addLayer({ id: 'traces-lisere', type: 'line', source: 'traces', layout: { 'line-join': 'round', 'line-cap': 'round' },
+        paint: { 'line-color': '#fff', 'line-width': ['interpolate', ['linear'], ['zoom'], 4, 4, 12, 7], 'line-opacity': 0.85 } });
+      map.addLayer({ id: 'traces', type: 'line', source: 'traces', layout: { 'line-join': 'round', 'line-cap': 'round' },
+        paint: { 'line-color': ['get', 'color'], 'line-width': ['interpolate', ['linear'], ['zoom'], 4, 2.2, 12, 4] } });
+      map.addLayer({ id: 'traces-survol', type: 'line', source: 'traces', filter: ['==', ['get', 'i'], -1], layout: { 'line-join': 'round', 'line-cap': 'round' },
+        paint: { 'line-color': ['get', 'color'], 'line-width': ['interpolate', ['linear'], ['zoom'], 4, 4, 12, 6.5] } });
+      map.addLayer({ id: 'departs', type: 'circle', source: 'departs',
+        paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 4, 4.5, 12, 7], 'circle-color': ['get', 'color'], 'circle-stroke-color': '#fff', 'circle-stroke-width': 2 } });
+
+      // Survol et clic : vignette du récit
+      const interactive = ['traces', 'departs'];
+      const tip = new maplibregl.Popup({ closeButton: false, closeOnClick: false, offset: 10, className: 'map-tip' });
+      map.on('mousemove', interactive, (e) => {
+        const f = e.features?.[0];
+        if (!f) return;
+        map.getCanvas().style.cursor = 'pointer';
+        map.setFilter('traces-survol', ['==', ['get', 'i'], f.properties.i]);
+        tip.setLngLat(e.lngLat).setText(f.properties.title).addTo(map);
+      });
+      map.on('mouseleave', interactive, () => {
+        map.getCanvas().style.cursor = '';
+        map.setFilter('traces-survol', ['==', ['get', 'i'], -1]);
+        tip.remove();
+      });
+      map.on('click', interactive, (e) => {
+        const r = rides[e.features![0].properties.i];
+        tip.remove();
+        const stats = [r.distance && `${n(r.distance)} km`, r.elevation && `${n(r.elevation)} m D+`].filter(Boolean).join(' · ');
+        new maplibregl.Popup({ maxWidth: '16rem', offset: 8 })
+          .setLngLat(e.lngLat)
+          .setHTML(`
+            <a class="map-card" href="${esc(r.href)}">
+              ${r.thumb ? `<img src="${esc(r.thumb)}" alt="" />` : ''}
+              <span class="map-card-body">
+                ${r.category ? `<span class="map-card-cat" style="color:${r.color}">${esc(r.category)}</span>` : ''}
+                <strong>${esc(r.title)}</strong>
+                ${stats ? `<span>${stats}</span>` : ''}
+                ${r.place ? `<span>${esc(r.place)}</span>` : ''}
+              </span>
+            </a>`)
+          .addTo(map);
+      });
+    });
   }
 
-  // /carte/#44.56,6.49 : centre la carte sur une sortie (lien « Voir sur la carte »)
-  const m = location.hash.match(/^#(-?[\d.]+),(-?[\d.]+)$/);
-  if (m) map.setView([+m[1], +m[2]], 11);
-  else if (bounds.isValid()) map.fitBounds(bounds, { padding: [20, 20] });
-  else map.setView([46.6, 2.5], 6);
+  const io = new IntersectionObserver(
+    (entries) => {
+      if (entries.some((e) => e.isIntersecting)) {
+        io.disconnect();
+        start().catch((e) => {
+          console.error('[carte]', e);
+          el.dataset.error = '';
+        });
+      }
+    },
+    { rootMargin: '300px' },
+  );
+  io.observe(el);
 </script>
