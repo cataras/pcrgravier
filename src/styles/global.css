@@ -328,3 +328,6 @@ button[type='submit']:hover, .button:hover { background: var(--accent); color: #
 .map-card-body { display: grid; gap: 0.1rem; padding: 0.7rem 0.9rem 0.85rem; }
 .map-card strong { font: 900 1.15rem/1.15 var(--font-title); color: var(--ink); }
 .map-card-cat { font: 700 0.68rem var(--font-title); text-transform: uppercase; letter-spacing: 0.12em; }
+/* relief OpenTopoMap adouci : les tracés colorés ressortent mieux */
+.tiles-relief { filter: saturate(0.3) brightness(1.08) contrast(0.92); }
+.tiles-epure { filter: grayscale(1) brightness(1.08) contrast(0.85); }

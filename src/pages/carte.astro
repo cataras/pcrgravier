@@ -73,13 +73,21 @@ const legend = categories
     maxZoom: 19,
     attribution: '© <a href="https://www.openstreetmap.org/copyright">contributeurs OpenStreetMap</a>',
   });
+  // OpenTopoMap, couleurs atténuées en CSS (.tiles-relief) pour faire ressortir les tracés
   const relief = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
     maxZoom: 17,
+    className: 'tiles-relief',
     attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, SRTM | style © <a href="https://opentopomap.org">OpenTopoMap</a>',
+  });
+  // Plan OpenStreetMap passé en gris clair (.tiles-epure) : fond très sobre
+  const epure = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    className: 'tiles-epure',
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">contributeurs OpenStreetMap</a>',
   });
 
   const map = L.map(el, { layers: [relief], scrollWheelZoom: false });
-  L.control.layers({ Relief: relief, Plan: plan }, undefined, { position: 'topright' }).addTo(map);
+  L.control.layers({ Relief: relief, 'Épuré': epure, Plan: plan }, undefined, { position: 'topright' }).addTo(map);
   // la molette ne zoome qu'après un clic sur la carte (pour ne pas bloquer le défilement de la page)
   map.on('click', () => map.scrollWheelZoom.enable());
   map.on('mouseout', () => map.scrollWheelZoom.disable());
