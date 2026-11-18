@@ -1,0 +1,38 @@
+# Configuration Apache du site statique pcrgravier.cc
+# (copiée telle quelle dans dist/ par Astro, puis envoyée sur le serveur)
+
+# Pages inconnues → page 404 du site
+ErrorDocument 404 /404.html
+
+# /parpaillon → /parpaillon/ comme sur l'ancien WordPress (comportement par défaut d'Apache)
+DirectorySlash On
+Options -Indexes
+
+RewriteEngine On
+
+# Tout en HTTPS, sans www (sauf la validation Let's Encrypt)
+RewriteCond %{REQUEST_URI} !^/\.well-known/
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteCond %{HTTPS} off [OR]
+RewriteCond %{HTTP_HOST} ^www\. [NC]
+RewriteRule ^ https://pcrgravier.cc%{REQUEST_URI} [R=301,L]
+
+# Ancien flux RSS WordPress
+RewriteRule ^(comments/)?feed/?$ /rss.xml [R=301,L]
+
+# Pages WordPress supprimées
+RewriteRule ^(page-d-exemple|category/non-classe)/?$ / [R=301,L]
+
+# Ancienne interface d'administration
+RewriteRule ^(wp-admin(/.*)?|wp-login\.php)$ /admin/ [R=302,L]
+
+# Les fichiers de /_astro/ ont un nom qui change à chaque modification :
+# le navigateur peut les garder un an. Les pages HTML, elles, sont revérifiées.
+<IfModule mod_headers.c>
+  <If "%{REQUEST_URI} =~ m#^/_astro/#">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </If>
+  <ElseIf "%{REQUEST_URI} =~ m#(/|\.html)$#">
+    Header set Cache-Control "public, max-age=0, must-revalidate"
+  </ElseIf>
+</IfModule>

@@ -1,0 +1,55 @@
+# Construit le site à chaque modification de la branche main (y compris depuis Sveltia CMS)
+# et range le résultat (le contenu de dist/) dans la branche « deploy ».
+#
+# Le serveur vient chercher cette branche lui-même toutes les 5 minutes
+# (scripts/pull-deploy.sh, lancé par une tâche cron de Virtualmin) :
+# aucun accès au serveur ni mot de passe n'est stocké dans GitHub.
+#
+# Variable facultative (Settings › Secrets and variables › Actions › Variables) :
+#   PUBLIC_WEB3FORMS_KEY   clé du formulaire de contact (publique par nature)
+name: Déploiement
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+        env:
+          PUBLIC_WEB3FORMS_KEY: ${{ vars.PUBLIC_WEB3FORMS_KEY }}
+
+      - name: Publication dans la branche deploy
+        run: |
+          cd dist
+          git init -q -b deploy
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote add origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
+          # On repart du dernier état publié : seules les photos nouvelles ou modifiées sont envoyées.
+          if git fetch -q --depth=1 origin deploy; then
+            git reset -q --soft FETCH_HEAD
+          fi
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Site inchangé, rien à publier."
+            exit 0
+          fi
+          git commit -q -m "Site construit depuis ${GITHUB_SHA::7}"
+          git push -q origin deploy
