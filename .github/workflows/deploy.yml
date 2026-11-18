@@ -31,6 +31,8 @@ jobs:
           node-version-file: .node-version
           cache: npm
       - run: npm ci
+      # contrôle des types : un code cassé n'est pas publié
+      - run: npm run check
       - run: npm run build
         env:
           PUBLIC_WEB3FORMS_KEY: ${{ vars.PUBLIC_WEB3FORMS_KEY }}
