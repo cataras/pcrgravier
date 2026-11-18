@@ -1,8 +1,8 @@
 ---
 title: "Ardennes Arbalète"
 date: 2019-09-06T17:42:49+00:00
-author: "Sims Teuteul"
-categories: ["Aventure"]
+author: sims
+categories: [aventure]
 cover: "../../assets/uploads/2019/09/vn-ardennes-1104.jpg"
 ---
 

@@ -1,8 +1,8 @@
 ---
 title: "Frozenbleau"
 date: 2024-01-10T20:44:00+00:00
-author: "Julien Sommier"
-categories: ["Photo Dump"]
+author: julien
+categories: [photo-dump]
 cover: "../../assets/uploads/2026/02/DSF4896-1400x800.jpg"
 ---
 

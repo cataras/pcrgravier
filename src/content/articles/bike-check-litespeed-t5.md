@@ -1,8 +1,8 @@
 ---
 title: "Bike Check : Litespeed T5 Gravel"
 date: 2019-11-25T12:12:21+00:00
-author: "Sims Teuteul"
-categories: ["Gear"]
+author: sims
+categories: [gear]
 cover: "../../assets/uploads/2019/11/litespeedt5_gravel_pcr_gravier-3-1400x800.jpg"
 ---
 

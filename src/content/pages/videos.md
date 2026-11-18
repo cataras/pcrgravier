@@ -1,5 +1,7 @@
 ---
 title: "VIDÉOS"
+menu: true
+menuOrder: 1
 ---
 
 > ***Chaque homme devrait tirer un bateau sur une montagne une fois dans sa vie.***

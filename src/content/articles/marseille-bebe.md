@@ -1,8 +1,8 @@
 ---
 title: "Marseille Bébé"
 date: 2024-02-10T20:20:00+00:00
-author: "Julien Sommier"
-categories: ["Photo Dump"]
+author: julien
+categories: [photo-dump]
 cover: "../../assets/uploads/2026/02/2B5D32F5-594E-4B0B-87FB-11D1B178C59F-29926-00001F5B66751625-1400x800.jpg"
 ---
 

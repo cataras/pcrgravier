@@ -1,8 +1,8 @@
 ---
 title: "Gravel Origin 83"
 date: 2018-10-30T20:12:07+00:00
-author: "Sims Teuteul"
-categories: ["Escapade"]
+author: sims
+categories: [escapade]
 cover: "../../assets/uploads/2018/10/ROC_AZUR_GRAVEL_ORIGIN_GRAVIER-11-1400x800.jpg"
 ---
 

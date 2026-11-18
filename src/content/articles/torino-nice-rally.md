@@ -1,8 +1,8 @@
 ---
 title: "Torino - Nice Rally"
 date: 2018-10-23T08:27:59+00:00
-author: "Sims Teuteul"
-categories: ["Aventure"]
+author: sims
+categories: [aventure]
 ---
 
 Un voyage comme celui-ci demande pas mal de préparation. Déjà, il faut en avoir l’idée, ou laisser quelqu’un d’autre l’avoir à sa place. Puis il faut savoir si c’est faisable, trouver le bon vélo, le matériel. Ensuite préparer, chercher, analyser, tracer, mapper. **Imaginer ce que sera cette route** avec des vues aériennes, des street views…

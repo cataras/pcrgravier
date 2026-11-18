@@ -1,8 +1,8 @@
 ---
 title: "SLOWVENIA"
 date: 2019-12-04T17:38:33+00:00
-author: "Sims Teuteul"
-categories: ["Aventure"]
+author: sims
+categories: [aventure]
 cover: "../../assets/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-136-1400x800.jpg"
 ---
 

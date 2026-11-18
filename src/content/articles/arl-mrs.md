@@ -1,8 +1,8 @@
 ---
 title: "ARL-MRS"
 date: 2018-10-30T20:16:51+00:00
-author: "Sims Teuteul"
-categories: ["Escapade"]
+author: sims
+categories: [escapade]
 cover: "../../assets/uploads/2018/11/arles-marseille-gravel_26.jpeg"
 ---
 

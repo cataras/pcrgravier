@@ -1,8 +1,8 @@
 ---
 title: "Le col du Parpaillon"
 date: 2018-10-23T08:18:33+00:00
-author: "Sims Teuteul"
-categories: ["Escapade"]
+author: sims
+categories: [escapade]
 cover: "../../assets/uploads/2018/10/COL_DU_PARPAILLON_GRAVIER-3.jpg"
 ---
 

@@ -1,8 +1,8 @@
 ---
 title: "Bike Check : Genesis Croix De Fer"
 date: 2018-10-30T19:57:15+00:00
-author: "Sims Teuteul"
-categories: ["Gear"]
+author: sims
+categories: [gear]
 cover: "../../assets/uploads/2018/10/Bikecheck_JU_05.jpg"
 ---
 

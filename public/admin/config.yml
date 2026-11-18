@@ -72,15 +72,23 @@ collections:
         default: '{{now}}'
       - name: author
         label: Auteur
-        widget: string
+        widget: relation
+        collection: authors
+        value_field: '{{slug}}'
+        search_fields: [name]
+        display_fields: [name]
         required: false
-        hint: Prénom et nom, par exemple « Julien Sommier ».
+        hint: Pas dans la liste ? Ajoute-le d'abord dans « Auteurs ».
       - name: categories
         label: Catégories
-        widget: select
+        widget: relation
+        collection: categories
+        value_field: '{{slug}}'
+        search_fields: [name]
+        display_fields: [name]
         multiple: true
         min: 1
-        options: [Aventure, Escapade, Gear, Hack, Photo Dump]
+        hint: La première catégorie est affichée sur la vignette de l'article.
       - name: cover
         label: Photo de couverture
         widget: image
@@ -92,30 +100,185 @@ collections:
         default: false
         required: false
         hint: Un brouillon n'apparaît pas sur le site publié.
+      - name: ride
+        label: Fiche de sortie
+        widget: object
+        required: false
+        collapsed: true
+        hint: >-
+          Tout est facultatif. Si l'article contient une carte RideWithGPS, la
+          distance, le dénivelé, la part de piste, le lieu de départ et la position
+          sur la carte du site sont remplis automatiquement : ne saisis ici que ce
+          que tu veux corriger ou compléter (par exemple pour une trace Strava).
+        fields:
+          - { name: distance, label: Distance (km), widget: number, value_type: float, required: false }
+          - { name: elevation, label: Dénivelé positif (m), widget: number, value_type: int, required: false }
+          - { name: unpaved, label: Part de piste (%), widget: number, value_type: int, min: 0, max: 100, required: false }
+          - { name: days, label: Nombre de jours, widget: number, value_type: int, min: 1, required: false }
+          - { name: place, label: Lieu de départ, widget: string, required: false, hint: Par exemple « Embrun ». }
+          - { name: region, label: Région, widget: string, required: false }
+          - name: lat
+            label: Latitude du départ
+            widget: number
+            value_type: float
+            required: false
+            hint: >-
+              Pour placer la sortie sur la carte sans trace RideWithGPS : clic droit
+              sur le point de départ dans OpenStreetMap ou Google Maps, puis copier
+              les deux nombres (latitude ici, longitude en dessous).
+          - { name: lng, label: Longitude du départ, widget: number, value_type: float, required: false }
       - name: body
         label: Contenu
         widget: markdown
         hint: >-
           Plusieurs photos insérées à la suite forment automatiquement une galerie.
+          La description d'une photo s'affiche comme légende.
           Pour une carte ou une vidéo, utiliser le menu « Insérer » ou coller
           l'adresse seule sur une ligne.
 
   - name: pages
     label: Pages
+    label_singular: Page
+    description: >-
+      Pages fixes du site (À propos, Vidéos…). Coche « Dans le menu » pour
+      qu'elle apparaisse dans le menu principal.
+    folder: src/content/pages
+    extension: md
+    format: frontmatter
+    create: true
     media_folder: ../../assets/uploads
     public_folder: ../../assets/uploads
+    slug: '{{slug}}'
+    summary: '{{title}}'
+    sortable_fields:
+      fields: [title, menuOrder]
+      default:
+        field: menuOrder
+        direction: ascending
+    fields:
+      - name: title
+        label: Titre
+        widget: string
+        hint: >-
+          L'adresse de la page est fabriquée à partir du titre lors de la création
+          (« Nos traces » → /nos-traces/). Elle ne doit pas être celle d'un article.
+      - name: description
+        label: Résumé
+        widget: text
+        required: false
+        hint: Une ou deux phrases, utilisées par les moteurs de recherche et les partages.
+      - name: menu
+        label: Dans le menu
+        widget: boolean
+        default: false
+        required: false
+      - name: menuLabel
+        label: Texte dans le menu
+        widget: string
+        required: false
+        hint: Facultatif. Par défaut, le titre de la page.
+      - name: menuOrder
+        label: Position dans le menu
+        widget: number
+        value_type: int
+        default: 50
+        required: false
+        hint: Les petits nombres passent en premier. « Accueil » est toujours en tête et « Contact » à la fin.
+      - name: cover
+        label: Photo de couverture
+        widget: image
+        required: false
+      - name: draft
+        label: Brouillon
+        widget: boolean
+        default: false
+        required: false
+        hint: Un brouillon n'apparaît pas sur le site publié.
+      - name: body
+        label: Contenu
+        widget: markdown
+
+  - name: categories
+    label: Catégories
+    label_singular: Catégorie
+    description: >-
+      Catégories proposées dans les articles. Avant d'en supprimer une, retire-la
+      des articles qui l'utilisent, sinon le site ne pourra pas être construit.
+    folder: src/content/categories
+    extension: md
+    format: frontmatter
+    create: true
+    media_folder: ../../assets/uploads
+    public_folder: ../../assets/uploads
+    slug: '{{name}}'
+    identifier_field: name
+    summary: '{{name}}'
+    sortable_fields:
+      fields: [order, name]
+      default:
+        field: order
+        direction: ascending
+    fields:
+      - { name: name, label: Nom, widget: string }
+      - name: order
+        label: Ordre d'affichage
+        widget: number
+        value_type: int
+        default: 50
+        required: false
+      - { name: cover, label: Photo, widget: image, required: false }
+      - name: body
+        label: Présentation
+        widget: markdown
+        required: false
+        hint: Texte affiché en haut de la page de la catégorie.
+
+  - name: authors
+    label: Auteurs
+    label_singular: Auteur
+    description: Membres du collectif qui signent des articles.
+    folder: src/content/authors
+    extension: md
+    format: frontmatter
+    create: true
+    media_folder: ../../assets/uploads
+    public_folder: ../../assets/uploads
+    slug: '{{name}}'
+    identifier_field: name
+    summary: '{{name}}'
+    thumbnail: photo
+    fields:
+      - name: name
+        label: Prénom et nom
+        widget: string
+      - { name: photo, label: Photo, widget: image, required: false }
+      - { name: instagram, label: Lien Instagram, widget: string, required: false }
+      - name: body
+        label: Présentation
+        widget: markdown
+        required: false
+        hint: Quelques lignes affichées sur la page de l'auteur.
+
+  - name: settings
+    label: Réglages du site
     files:
-      - name: a-propos
-        label: À propos
-        file: src/content/pages/a-propos.md
+      - name: site
+        label: Réglages généraux
+        file: src/content/settings/site.json
+        format: json
+        media_folder: ../../assets/uploads
+        public_folder: ../../assets/uploads
         fields:
-          - { name: title, label: Titre, widget: string }
-          - { name: cover, label: Photo de couverture, widget: image, required: false }
-          - { name: body, label: Contenu, widget: markdown }
-      - name: videos
-        label: Vidéos
-        file: src/content/pages/videos.md
-        fields:
-          - { name: title, label: Titre, widget: string }
-          - { name: cover, label: Photo de couverture, widget: image, required: false }
-          - { name: body, label: Contenu, widget: markdown }
+          - { name: title, label: Nom du site, widget: string }
+          - { name: tagline, label: Slogan, widget: string, hint: Affiché dans l'onglet du navigateur. }
+          - name: description
+            label: Présentation du collectif
+            widget: text
+            hint: Affichée en pied de page et dans les partages sur les réseaux.
+          - { name: quote, label: Citation de la page d'accueil, widget: string }
+          - { name: hero, label: Grande photo de la page d'accueil, widget: image }
+          - { name: heroAlt, label: Description de cette photo, widget: string, required: false, hint: Pour les personnes malvoyantes. }
+          - { name: email, label: Adresse e-mail du collectif, widget: string }
+          - { name: instagram, label: Lien Instagram, widget: string, required: false }
+          - { name: facebook, label: Lien Facebook, widget: string, required: false }
+          - { name: footer, label: Mention en pied de page, widget: string, required: false }

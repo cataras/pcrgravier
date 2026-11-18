@@ -1,8 +1,8 @@
 ---
 title: "Vosges !"
 date: 2020-01-19T13:18:11+00:00
-author: "Sims Teuteul"
-categories: ["Escapade"]
+author: sims
+categories: [escapade]
 cover: "../../assets/uploads/2020/01/pcr-gravier-gravel-vosges-54-1400x800.jpg"
 ---
 

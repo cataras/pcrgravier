@@ -1,8 +1,8 @@
 ---
 title: "Cordel.cc Pump-Bag"
 date: 2018-10-23T10:23:12+00:00
-author: "Sims Teuteul"
-categories: ["Hack"]
+author: sims
+categories: [hack]
 cover: "../../assets/uploads/2018/10/cordel-cycling-bikepacking-bags-2-of-3.jpg"
 ---
 

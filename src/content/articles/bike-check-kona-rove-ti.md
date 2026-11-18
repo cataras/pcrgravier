@@ -1,8 +1,8 @@
 ---
 title: "Bike Check : Kona Rove Ti"
 date: 2020-09-17T17:52:34+00:00
-author: "Sims Teuteul"
-categories: ["Gear"]
+author: sims
+categories: [gear]
 cover: "../../assets/uploads/2020/06/kona_rove_ti_gravel_pcr_15_00-1400x800.jpg"
 ---
 

@@ -1,8 +1,8 @@
 ---
 title: "Bike Check : Genesis Fugio"
 date: 2020-03-17T18:39:51+00:00
-author: "Sims Teuteul"
-categories: ["Gear"]
+author: sims
+categories: [gear]
 cover: "../../assets/uploads/2020/03/fugio-all-in-setup-2-1400x800.jpg"
 ---
 

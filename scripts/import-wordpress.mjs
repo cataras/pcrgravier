@@ -227,6 +227,10 @@ for (const dir of [OUT_ARTICLES, OUT_PAGES, OUT_IMAGES]) {
   fs.mkdirSync(dir, { recursive: true });
 }
 
+const AUTHOR_IDS = { 'Julien Sommier': 'julien', 'Sims Teuteul': 'sims' };
+const slugify = (s) =>
+  s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
 const files = fs.readdirSync(SRC_CONTENT).filter((f) => f.endsWith('.md'));
 let nArticles = 0;
 let nPages = 0;
@@ -250,9 +254,12 @@ for (const file of files) {
   const fm = ['---', `title: ${yamlStr(data.titre)}`];
   if (!isPage) {
     fm.push(`date: ${data.date || '2018-01-01'}`);
-    if (data.auteur) fm.push(`author: ${yamlStr(data.auteur)}`);
-    fm.push(`categories: [${(data.categories ?? []).map(yamlStr).join(', ')}]`);
+    // auteurs et catégories : identifiants des fichiers de src/content/authors et src/content/categories
+    if (data.auteur) fm.push(`author: ${AUTHOR_IDS[data.auteur] ?? slugify(data.auteur)}`);
+    fm.push(`categories: [${(data.categories ?? []).map(slugify).join(', ')}]`);
   }
+  const menuOrder = { videos: 1, 'a-propos': 2 }[slug];
+  if (isPage && menuOrder) fm.push('menu: true', `menuOrder: ${menuOrder}`);
   if (cover) fm.push(`cover: ${yamlStr('../../assets/uploads/' + cover)}`);
   fm.push('---', '');
 

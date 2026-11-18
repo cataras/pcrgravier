@@ -1,8 +1,8 @@
 ---
 title: "Hometown"
 date: 2019-11-25T12:29:30+00:00
-author: "Sims Teuteul"
-categories: ["Escapade"]
+author: sims
+categories: [escapade]
 cover: "../../assets/uploads/2019/11/paris-gravel-bike-gravier-69-1400x800.jpeg"
 ---
 

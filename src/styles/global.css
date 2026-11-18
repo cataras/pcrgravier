@@ -69,8 +69,30 @@ body.menu-open .site-header { background: var(--ink); }
 .logo { display: block; }
 .logo img { width: 100px; height: auto; }
 
+.header-end { justify-self: end; display: flex; align-items: center; gap: 0.25rem; }
+
+.nav-inline { display: none; }
+.nav-inline ul { display: flex; gap: 0.25rem; list-style: none; margin: 0; padding: 0; }
+.nav-inline a {
+  display: block; padding: 0.4rem 0.7rem;
+  font: 700 0.85rem/1 var(--font-title); text-transform: uppercase; letter-spacing: 0.12em;
+  color: #fff; text-decoration: none; white-space: nowrap;
+}
+.nav-inline a:hover { color: #fff; opacity: 0.7; }
+.nav-inline a[aria-current='page'] { box-shadow: inset 0 -2px 0 var(--accent); }
+
+.search-link { display: grid; place-items: center; width: 2.5rem; height: 2.5rem; color: #fff; }
+.search-link:hover { color: #fff; opacity: 0.7; }
+.search-link svg { width: 1.3rem; height: 1.3rem; fill: currentColor; }
+
+/* Grand écran : menu affiché en entier, pas de bouton ☰ */
+@media (min-width: 1080px) {
+  .nav-inline { display: block; }
+  .menu-toggle, .menu { display: none !important; }
+}
+
 .menu-toggle {
-  justify-self: end; width: 2.75rem; height: 2.75rem; padding: 0;
+  width: 2.75rem; height: 2.75rem; padding: 0;
   background: none; border: 0; cursor: pointer; color: #fff;
 }
 .menu-toggle span,
@@ -185,10 +207,19 @@ body.menu-open .site-header { background: var(--ink); }
 .prose figure { margin: 0; }
 .prose figure img { width: 100%; cursor: zoom-in; }
 
-/* galeries en colonnes (respecte le format portrait / paysage de chaque photo) */
-.gallery { columns: 3 16rem; column-gap: 0.5rem; }
-.gallery[data-count='2'], .gallery[data-count='4'] { columns: 2 16rem; }
-.gallery figure { break-inside: avoid; margin-bottom: 0.5rem; }
+/* galeries en rangées de même hauteur, sans recadrage : chaque photo prend
+   une largeur proportionnelle à son format (--r = largeur / hauteur) */
+.gallery { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.gallery figure { --r: 1.5; flex: var(--r) 1 calc(var(--r) * 13rem); position: relative; }
+.gallery figure img { width: 100%; height: auto; aspect-ratio: var(--r); object-fit: cover; }
+@media (max-width: 600px) {
+  .gallery figure { flex-basis: calc(var(--r) * 8rem); }
+}
+
+/* légendes */
+.prose figcaption { padding: 0.5rem 0 0; font-size: 0.85rem; line-height: 1.5; color: var(--muted); text-align: center; }
+.gallery figcaption { position: absolute; inset: auto 0 0; padding: 1.5rem 0.6rem 0.4rem; color: #fff; font-size: 0.8rem; text-align: left;
+  background: linear-gradient(transparent, rgb(0 0 0 / 0.6)); pointer-events: none; }
 
 /* intégrations : cartes et vidéos */
 .embed iframe { display: block; width: 100%; border: 0; background: var(--soft); }
@@ -230,7 +261,11 @@ button[type='submit']:hover, .button:hover { background: var(--accent); color: #
 }
 .lightbox[open] { display: grid; place-items: center; }
 .lightbox::backdrop { background: transparent; }
-.lightbox img { max-width: calc(100vw - 7rem); max-height: calc(100svh - 3rem); width: auto; height: auto; object-fit: contain; }
+.lightbox figure { margin: 0; display: grid; justify-items: center; gap: 0.6rem; }
+.lightbox img { max-width: calc(100vw - 7rem); max-height: calc(100svh - 5rem); width: auto; height: auto; object-fit: contain; touch-action: pan-y pinch-zoom; }
+.lightbox figcaption { display: flex; gap: 1rem; max-width: calc(100vw - 7rem); color: rgb(255 255 255 / 0.8); font-size: 0.85rem; line-height: 1.4; }
+.lightbox-count { font: 700 0.8rem var(--font-title); letter-spacing: 0.1em; white-space: nowrap; color: rgb(255 255 255 / 0.55); }
+.lightbox.single .lightbox-prev, .lightbox.single .lightbox-next { display: none; }
 .lightbox button {
   position: absolute; display: grid; place-items: center; width: 3rem; height: 3rem;
   border: 0; background: none; color: #fff; font-size: 2.6rem; line-height: 1; cursor: pointer; opacity: 0.75;
@@ -240,10 +275,56 @@ button[type='submit']:hover, .button:hover { background: var(--accent); color: #
 .lightbox-prev { left: 0.5rem; top: 50%; translate: 0 -50%; }
 .lightbox-next { right: 0.5rem; top: 50%; translate: 0 -50%; }
 @media (max-width: 600px) {
-  .lightbox img { max-width: 100vw; }
+  .lightbox img { max-width: 100vw; max-height: calc(100svh - 8rem); }
+  .lightbox figcaption { max-width: calc(100vw - 2rem); }
   .lightbox-prev, .lightbox-next { top: auto; bottom: 0.5rem; translate: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; }
 }
+
+/* ------------------------------------------------------------ pages auteur / catégorie */
+.list-header .avatar { width: 8rem; height: 8rem; margin: 0 auto 1.2rem; border-radius: 50%; object-fit: cover; }
+.list-intro { max-width: var(--measure); margin: 1.2rem auto 0; }
+.list-intro > :last-child { margin-bottom: 0; }
+
+/* ------------------------------------------------------------ recherche (Pagefind) */
+.search-page {
+  max-width: var(--measure); margin: 0 auto; padding: 0 1rem 4rem;
+  --pagefind-ui-primary: var(--ink);
+  --pagefind-ui-text: var(--text);
+  --pagefind-ui-border: #cfcfcf;
+  --pagefind-ui-border-radius: 2px;
+  --pagefind-ui-tag: var(--soft);
+  --pagefind-ui-font: var(--font-body);
+}
+.search-page .pagefind-ui__result-link { font-family: var(--font-title); font-weight: 700; color: var(--ink); }
+
+/* ------------------------------------------------------------ fiche de sortie */
+.ride-sheet {
+  max-width: var(--wide); margin: 0 auto; padding: 1.6rem 1rem;
+  border-bottom: 1px solid var(--soft); text-align: center;
+}
+.ride-stats { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem 3rem; margin: 0; }
+.ride-stats div { display: grid; }
+.ride-stats dt { order: 2; font: 700 0.72rem/1.4 var(--font-title); text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted); }
+.ride-stats dd { margin: 0; font: 400 1.05rem/1.2 var(--font-title); color: var(--ink); }
+.ride-stats strong { font-size: 2rem; font-weight: 900; }
+.ride-where { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.3rem 1.4rem; margin: 0.9rem 0 0; font-size: 0.9rem; color: var(--muted); }
+.ride-where:empty { display: none; }
+.section-title { margin: 0; padding: 2.5rem 1rem 1.5rem; text-align: center; font-size: 1.4rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; }
+
+/* ------------------------------------------------------------ carte des sorties */
+.map-wrap { max-width: var(--wide); margin: 0 auto; padding: 0 1rem 4rem; }
+#map { height: min(75svh, 46rem); background: var(--soft); z-index: 0; }
+.map-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.4rem 1.4rem; list-style: none; margin: 1rem 0 0; padding: 0; font: 700 0.8rem var(--font-title); text-transform: uppercase; letter-spacing: 0.1em; }
+.map-legend span { display: inline-block; width: 0.8rem; height: 0.8rem; margin-right: 0.45rem; border-radius: 50%; vertical-align: -0.05rem; }
+.leaflet-popup-content { margin: 0; width: 15rem !important; }
+.leaflet-popup-content-wrapper { padding: 0; overflow: hidden; border-radius: 4px; }
+.map-card { display: block; color: var(--text); text-decoration: none; font: 400 0.85rem/1.45 var(--font-body); }
+.map-card:hover { color: var(--text); }
+.map-card img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
+.map-card-body { display: grid; gap: 0.1rem; padding: 0.7rem 0.9rem 0.85rem; }
+.map-card strong { font: 900 1.15rem/1.15 var(--font-title); color: var(--ink); }
+.map-card-cat { font: 700 0.68rem var(--font-title); text-transform: uppercase; letter-spacing: 0.12em; }

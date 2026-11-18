@@ -1,8 +1,8 @@
 ---
 title: "The mystery of Gravier"
 date: 2020-09-03T15:20:42+00:00
-author: "Sims Teuteul"
-categories: ["Aventure"]
+author: sims
+categories: [aventure]
 cover: "../../assets/uploads/2020/08/GTJ_GRAVEL_BIKE_PCR_GRAVIER-74-1400x800.jpg"
 ---
 

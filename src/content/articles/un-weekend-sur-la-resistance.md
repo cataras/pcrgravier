@@ -1,8 +1,8 @@
 ---
 title: "Un weekend sur la Résistance"
 date: 2018-10-23T08:37:38+00:00
-author: "Sims Teuteul"
-categories: ["Escapade"]
+author: sims
+categories: [escapade]
 cover: "../../assets/uploads/2018/10/la-resistance-gravel-1400x800.jpg"
 ---
 

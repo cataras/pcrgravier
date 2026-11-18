@@ -1,0 +1,39 @@
+---
+/** Fiche de sortie affichée en tête d'article : distance, D+, piste, lieu. */
+import type { Ride } from '../lib/rides';
+
+interface Props {
+  ride: Ride;
+}
+const { ride } = Astro.props;
+const n = (v: number) => v.toLocaleString('fr-FR');
+const stats = [
+  ride.distance && { value: n(ride.distance), unit: 'km', label: 'Distance' },
+  ride.elevation && { value: n(ride.elevation), unit: 'm', label: 'Dénivelé +' },
+  ride.unpaved !== undefined && { value: n(ride.unpaved), unit: '%', label: 'Piste' },
+  ride.days && ride.days > 1 && { value: n(ride.days), unit: 'jours', label: 'Durée' },
+].filter(Boolean) as { value: string; unit: string; label: string }[];
+const where = [ride.place, ride.region].filter(Boolean).join(', ');
+---
+
+{(stats.length > 0 || where) && (
+  <aside class="ride-sheet" aria-label="Fiche de la sortie">
+    {stats.length > 0 && (
+      <dl class="ride-stats">
+        {stats.map((s) => (
+          <div>
+            <dt>{s.label}</dt>
+            <dd><strong>{s.value}</strong> {s.unit}</dd>
+          </div>
+        ))}
+      </dl>
+    )}
+    <p class="ride-where">
+      {where && <span>Départ : {where}</span>}
+      {ride.lat !== undefined && <a href={`/carte/#${ride.lat},${ride.lng}`}>Voir sur la carte</a>}
+      {ride.links.map((url, i) => (
+        <a href={url} target="_blank" rel="noopener">{ride.links.length > 1 ? `Trace ${i + 1}` : 'Trace RideWithGPS'}</a>
+      ))}
+    </p>
+  </aside>
+)}

@@ -1,8 +1,8 @@
 ---
 title: "Bike Check : Pinnacle Arkose 2"
 date: 2019-01-24T17:27:03+00:00
-author: "Sims Teuteul"
-categories: ["Gear"]
+author: sims
+categories: [gear]
 ---
 
 **Le brief de base pour remplacer mon Specialized Diverge, premier modèle du nom, était simple** : un budget « raisonnable » (comprendre 1000/1500€, la raison étant toute relative dans le cyclisme), pouvoir passer des pneus de grosse section (limité à 33 sur le Spé à l’époque) et surtout passer au freinage hydraulique suite à une expérience mitigée avec les TRP Spyre mécanique.  

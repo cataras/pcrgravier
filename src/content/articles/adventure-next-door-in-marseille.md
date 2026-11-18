@@ -1,8 +1,8 @@
 ---
 title: "Adventure next Door in Marseille"
 date: 2019-02-02T09:52:26+00:00
-author: "Sims Teuteul"
-categories: ["Aventure"]
+author: sims
+categories: [aventure]
 cover: "../../assets/uploads/2019/01/bikepacking-gravel-marseille-12.jpg"
 ---
 

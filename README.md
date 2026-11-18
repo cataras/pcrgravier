@@ -44,7 +44,54 @@ https://ridewithgps.com/routes/12345678
   redimensionnées et converties en WebP au moment du build.
 - `draft: true` dans l'en-tête masque l'article en production.
 
-Catégories existantes : Aventure, Escapade, Gear, Hack, Photo Dump.
+Dans l'en-tête d'un article, `author` et `categories` contiennent
+l'identifiant d'un fichier de `src/content/authors` ou `src/content/categories`
+(par exemple `author: julien`, `categories: [aventure]`). Dans le CMS, ce sont
+des listes déroulantes.
+
+## Ce qui se gère depuis le CMS
+
+| Rubrique | Fichiers | Rôle |
+| --- | --- | --- |
+| Articles | `src/content/articles/` | Récits, avec auteur, catégories et brouillon |
+| Pages | `src/content/pages/` | Pages libres à la racine (`/a-propos/`). « Dans le menu » + position pour les afficher dans le menu |
+| Catégories | `src/content/categories/` | Nom, ordre, photo et présentation de la page catégorie |
+| Auteurs | `src/content/authors/` | Nom, photo, Instagram et présentation de la page auteur |
+| Réglages du site | `src/content/settings/site.json` | Nom, slogan, citation et photo d'accueil, e-mail, réseaux, pied de page |
+
+Le menu se construit tout seul : « Accueil », les pages cochées « Dans le
+menu » (triées par position), puis « Contact ». Une page ne peut pas avoir la
+même adresse qu'un article ou qu'une rubrique du site (`category`, `author`,
+`contact`, `recherche`…) : la construction s'arrête avec un message clair.
+
+## Fiche de sortie, carte et articles liés
+
+- **Fiche de sortie** (en tête d'article) : distance, dénivelé, part de piste,
+  durée et lieu de départ. Elle est remplie automatiquement à partir des cartes
+  RideWithGPS collées dans l'article (parcours ou sorties publics) ; les champs
+  `ride:` de l'en-tête (« Fiche de sortie » dans le CMS) l'emportent.
+- Les traces sont téléchargées une seule fois et gardées dans
+  `src/data/traces/` (à committer, pour ne pas dépendre de RideWithGPS à chaque
+  build). Si RideWithGPS ne répond pas, l'article s'affiche sans fiche.
+- **Carte** (`/carte/`) : tracé et point de départ de chaque sortie qui a une
+  trace ou des coordonnées (`ride.lat` / `ride.lng`). Fonds OpenTopoMap et
+  OpenStreetMap, gratuits et sans compte. Une couleur par catégorie.
+- **À lire aussi** : les trois articles les plus proches géographiquement, puis
+  de la même catégorie.
+- **Galeries** : rangées de même hauteur sans recadrage ; le texte alternatif
+  d'une photo (`![légende](photo.jpg)`) devient sa légende. La visionneuse se
+  manie aux flèches, au clavier ou en glissant du doigt.
+
+⚠︎ Astro garde en cache le rendu des articles (`.astro/`, `node_modules/.astro`).
+Après une modification des plugins de `src/plugins/`, supprimer ces dossiers
+pour voir le résultat en local.
+
+## Recherche
+
+`npm run build` lance [Pagefind](https://pagefind.app) après Astro : il
+fabrique un index de recherche statique dans `dist/pagefind/`, utilisé par la
+page `/recherche/` (aucun serveur ni service extérieur). Avec `npm run dev`,
+l'index n'existe pas : tester la recherche avec `npm run build && npm run preview`.
 
 ## Import depuis WordPress
 

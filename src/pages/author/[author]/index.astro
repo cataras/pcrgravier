@@ -1,23 +1,31 @@
 ---
+import { Image } from 'astro:assets';
+import { getCollection, render } from 'astro:content';
 import Base from '../../../layouts/Base.astro';
 import ArticleGrid from '../../../components/ArticleGrid.astro';
-import { getArticles, authorSlug } from '../../../lib/site';
+import { getArticles } from '../../../lib/site';
 
 export async function getStaticPaths() {
   const articles = await getArticles();
-  const names = [...new Set(articles.map((a) => a.data.author).filter(Boolean))] as string[];
-  return names.map((name) => ({
-    params: { author: authorSlug(name)! },
-    props: { name, articles: articles.filter((a) => a.data.author === name) },
-  }));
+  const authors = await getCollection('authors');
+  return authors
+    .map((author) => ({ author, articles: articles.filter((a) => a.data.author?.id === author.id) }))
+    .filter(({ articles }) => articles.length)
+    .map(({ author, articles }) => ({ params: { author: author.id }, props: { author, articles } }));
 }
-const { name, articles } = Astro.props;
+const { author, articles } = Astro.props;
+const { name, photo, instagram } = author.data;
+const { Content } = await render(author);
+const hasBio = author.body?.trim();
 ---
 
-<Base title={name} description={`Articles de ${name}`}>
+<Base title={name} description={`Articles de ${name}`} image={photo}>
   <header class="list-header">
+    {photo && <Image class="avatar" src={photo} alt="" width={160} height={160} fit="cover" />}
     <p class="kicker">Auteur</p>
     <h1>{name}</h1>
+    {hasBio && <div class="list-intro"><Content /></div>}
+    {instagram && <p><a href={instagram} target="_blank" rel="noopener">Instagram</a></p>}
   </header>
   <ArticleGrid articles={articles} />
 </Base>

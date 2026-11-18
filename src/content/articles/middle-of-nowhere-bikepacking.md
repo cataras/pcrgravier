@@ -1,8 +1,8 @@
 ---
 title: "Middle Of Nowhere"
 date: 2026-01-09T19:21:00+00:00
-author: "Julien Sommier"
-categories: ["Aventure"]
+author: julien
+categories: [aventure]
 cover: "../../assets/uploads/2025/10/DSCF5720-2-2.jpg"
 ---
 

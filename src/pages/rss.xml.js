@@ -1,19 +1,23 @@
 import rss from '@astrojs/rss';
-import { SITE, getArticles } from '../lib/site';
+import { getEntry } from 'astro:content';
+import { getSettings, getArticles } from '../lib/site';
 
 export async function GET(context) {
+  const site = await getSettings();
   const articles = await getArticles();
   return rss({
-    title: SITE.title,
-    description: SITE.description,
+    title: site.title,
+    description: site.description,
     site: context.site,
-    items: articles.map((a) => ({
-      title: a.data.title,
-      pubDate: a.data.date,
-      link: `/${a.id}/`,
-      categories: a.data.categories,
-      author: a.data.author,
-    })),
+    items: await Promise.all(
+      articles.map(async (a) => ({
+        title: a.data.title,
+        pubDate: a.data.date,
+        link: `/${a.id}/`,
+        categories: (await Promise.all(a.data.categories.map((r) => getEntry(r)))).map((c) => c?.data.name).filter(Boolean),
+        author: a.data.author ? (await getEntry(a.data.author))?.data.name : undefined,
+      })),
+    ),
     customData: '<language>fr-fr</language>',
   });
 }

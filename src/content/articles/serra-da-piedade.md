@@ -1,8 +1,8 @@
 ---
 title: "Brazilian Exploration #1"
 date: 2018-10-30T20:08:02+00:00
-author: "Sims Teuteul"
-categories: ["Escapade"]
+author: sims
+categories: [escapade]
 cover: "../../assets/uploads/2018/11/serra-da-piedade_00.jpg"
 ---
 

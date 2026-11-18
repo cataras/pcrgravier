@@ -1,8 +1,8 @@
 ---
 title: "Teuteulade - GTMC"
 date: 2018-10-23T10:21:28+00:00
-author: "Sims Teuteul"
-categories: ["Aventure"]
+author: sims
+categories: [aventure]
 cover: "../../assets/uploads/2018/11/gtmc-gravel-teuteulade_000.jpg"
 ---
 

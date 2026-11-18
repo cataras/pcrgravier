@@ -1,8 +1,8 @@
 ---
 title: "Slowvenia Vidéo"
 date: 2020-06-10T13:50:25+00:00
-author: "Sims Teuteul"
-categories: ["Aventure"]
+author: sims
+categories: [aventure]
 cover: "../../assets/uploads/2019/11/slovenia-gravel-bikepacking-pcr-gravier-168-1-1400x800.jpg"
 ---
 

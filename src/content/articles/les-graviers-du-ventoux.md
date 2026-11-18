@@ -1,8 +1,8 @@
 ---
 title: "Les Graviers du Ventoux"
 date: 2018-10-30T20:09:49+00:00
-author: "Sims Teuteul"
-categories: ["Escapade"]
+author: sims
+categories: [escapade]
 ---
 
 **GRIMPER LE GÉANT DE PROVENCE DE LA QUATRIÈME MANIÈRE…**

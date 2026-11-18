@@ -1,8 +1,8 @@
 ---
 title: "Camera Bag : Renaud"
 date: 2018-10-30T20:10:49+00:00
-author: "Sims Teuteul"
-categories: ["Hack"]
+author: sims
+categories: [hack]
 cover: "../../assets/uploads/2018/11/CAMERA_BAG_GRAVIER-11.jpg"
 ---
 

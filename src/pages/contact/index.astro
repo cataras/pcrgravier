@@ -8,8 +8,9 @@
  * Sans clé, la page propose simplement d'écrire directement par e-mail.
  */
 import Base from '../../layouts/Base.astro';
-import { SITE } from '../../lib/site';
+import { getSettings } from '../../lib/site';
 
+const SITE = await getSettings();
 const key = import.meta.env.PUBLIC_WEB3FORMS_KEY;
 ---
 

@@ -1,56 +1,75 @@
-import { getCollection, type CollectionEntry } from 'astro:content';
+import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
 
-export const SITE = {
-  title: 'PCR GRAVIER',
-  tagline: 'All Roads Bike Adventures',
-  description:
-    'PCR Gravier est un collectif de cyclistes réunis autour d’une passion pour l’aventure à vélo et une attirance certaine pour les chemins de traverse.',
-  quote: '« Il suffit de rouler pour avoir des histoires à raconter »',
-  email: 'pcrgravier@gmail.com',
-  social: {
-    instagram: 'https://www.instagram.com/pcrgravier/',
-    facebook: 'https://www.facebook.com/pcrgravier/',
-  },
-  footer: 'Droits réservés Castors Lapons – Maximum Offroad',
-};
-
-export const NAV = [
-  { label: 'Accueil', href: '/' },
-  { label: 'Vidéos', href: '/videos/' },
-  { label: 'À propos', href: '/a-propos/' },
-  { label: 'Contact', href: '/contact/' },
-];
-
-/** Auteurs : identifiant d'URL (repris de l'ancien site : /author/julien/) */
-export const AUTHORS: Record<string, string> = {
-  'Julien Sommier': 'julien',
-  'Sims Teuteul': 'sims',
-};
+export type Article = CollectionEntry<'articles'>;
+export type Page = CollectionEntry<'pages'>;
+export type Category = CollectionEntry<'categories'>;
+export type Author = CollectionEntry<'authors'>;
 
 export const PAGE_SIZE = 12;
 
-export const slugify = (s: string) =>
-  s
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
+/** Adresses déjà prises par le site : une page du CMS ne peut pas les utiliser. */
+const RESERVED = new Set(['admin', 'author', 'carte', 'category', 'contact', 'page', 'pagefind', 'recherche', 'rss.xml', '404', '_astro']);
 
-export const authorSlug = (name?: string) => (name ? (AUTHORS[name] ?? slugify(name)) : undefined);
+const isPublished = ({ data }: { data: { draft?: boolean } }) => import.meta.env.DEV || !data.draft;
 
-export type Article = CollectionEntry<'articles'>;
+/** Réglages généraux (titre, citation, réseaux…) modifiables dans le CMS. */
+export async function getSettings() {
+  const entry = await getEntry('settings', 'site');
+  if (!entry) throw new Error('Réglages introuvables : src/content/settings/site.json');
+  return entry.data;
+}
 
 /** Articles publiés, du plus récent au plus ancien. */
 export async function getArticles(): Promise<Article[]> {
-  const all = await getCollection('articles', ({ data }) => import.meta.env.DEV || !data.draft);
+  const all = await getCollection('articles', isPublished);
   return all.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 }
 
+/** Pages libres créées dans le CMS (À propos, Vidéos…), à la racine du site. */
+export async function getPages(): Promise<Page[]> {
+  const pages = await getCollection('pages', isPublished);
+  const articleIds = new Set((await getCollection('articles')).map((a) => a.id));
+  for (const p of pages) {
+    if (RESERVED.has(p.id) || articleIds.has(p.id)) {
+      throw new Error(
+        `La page « ${p.data.title} » utilise l'adresse /${p.id}/, déjà prise par ` +
+          (articleIds.has(p.id) ? 'un article' : 'le site') + '. Renomme le fichier de la page.',
+      );
+    }
+  }
+  return pages;
+}
+
+/** Menu principal : Accueil, Carte, les pages cochées « dans le menu », puis Contact. */
+export async function getNav() {
+  const pages = (await getPages())
+    .filter((p) => p.data.menu)
+    .sort((a, b) => a.data.menuOrder - b.data.menuOrder || a.data.title.localeCompare(b.data.title));
+  return [
+    { label: 'Accueil', href: '/' },
+    { label: 'Carte', href: '/carte/' },
+    ...pages.map((p) => ({ label: p.data.menuLabel ?? p.data.title, href: `/${p.id}/` })),
+    { label: 'Contact', href: '/contact/' },
+  ];
+}
+
+/** Catégories triées, avec leur nombre d'articles. */
 export async function getCategories() {
-  const counts = new Map<string, number>();
-  for (const a of await getArticles()) for (const c of a.data.categories) counts.set(c, (counts.get(c) ?? 0) + 1);
-  return [...counts].map(([name, count]) => ({ name, slug: slugify(name), count })).sort((a, b) => a.name.localeCompare(b.name));
+  const articles = await getArticles();
+  const cats = await getCollection('categories');
+  return cats
+    .map((c) => ({ entry: c, count: articles.filter((a) => a.data.categories.some((r) => r.id === c.id)).length }))
+    .sort((a, b) => a.entry.data.order - b.entry.data.order || a.entry.data.name.localeCompare(b.entry.data.name));
+}
+
+/** Première catégorie d'un article (affichée en pastille). */
+export async function mainCategory(article: { data: { categories?: { id: string }[] } }) {
+  const ref = article.data.categories?.[0];
+  return ref ? getEntry('categories', ref.id) : undefined;
+}
+
+export async function getAuthor(article: { data: { author?: { id: string } } }) {
+  return article.data.author ? getEntry('authors', article.data.author.id) : undefined;
 }
 
 export const formatDate = (d: Date) =>

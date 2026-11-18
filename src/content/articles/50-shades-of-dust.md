@@ -1,8 +1,8 @@
 ---
 title: "50 Shades of dust"
 date: 2026-01-02T18:46:00+00:00
-author: "Julien Sommier"
-categories: ["Escapade"]
+author: julien
+categories: [escapade]
 cover: "../../assets/uploads/2026/02/001-1400x800.jpg"
 ---
 

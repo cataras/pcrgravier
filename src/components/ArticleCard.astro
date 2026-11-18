@@ -1,6 +1,6 @@
 ---
 import { Image } from 'astro:assets';
-import { slugify, type Article } from '../lib/site';
+import { mainCategory, type Article } from '../lib/site';
 
 interface Props {
   article: Article;
@@ -8,8 +8,8 @@ interface Props {
   eager?: boolean;
 }
 const { article, large = false, eager = false } = Astro.props;
-const { title, cover, categories } = article.data;
-const category = categories[0];
+const { title, cover } = article.data;
+const category = await mainCategory(article);
 ---
 
 <article class:list={['card', { large }]}>
@@ -24,7 +24,7 @@ const category = categories[0];
     />
   )}
   <div class="card-body">
-    {category && <a class="pill" href={`/category/${slugify(category)}/`}>{category}</a>}
+    {category && <a class="pill" href={`/category/${category.id}/`}>{category.data.name}</a>}
     <h2><a href={`/${article.id}/`}>{title}</a></h2>
   </div>
 </article>

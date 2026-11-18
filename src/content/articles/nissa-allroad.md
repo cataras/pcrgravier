@@ -1,8 +1,8 @@
 ---
 title: "Nissa Allroad"
 date: 2019-02-21T09:22:26+00:00
-author: "Sims Teuteul"
-categories: ["Escapade"]
+author: sims
+categories: [escapade]
 cover: "../../assets/uploads/2019/02/Nissa_Allroad_PCRGravier_07.jpg"
 ---
 

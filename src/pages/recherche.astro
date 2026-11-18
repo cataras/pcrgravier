@@ -1,0 +1,32 @@
+---
+/**
+ * Recherche dans les articles, sans serveur : l'index est fabriqué par
+ * Pagefind juste après la construction du site (npm run build).
+ * En développement (npm run dev), l'index n'existe pas encore.
+ */
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Rechercher" description="Rechercher dans les récits du collectif PCR Gravier">
+  <header class="list-header">
+    <h1>Rechercher</h1>
+  </header>
+  <div class="search-page">
+    <div id="search"></div>
+    <noscript><p>La recherche a besoin de JavaScript.</p></noscript>
+  </div>
+  <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
+  <script is:inline src="/pagefind/pagefind-ui.js"></script>
+  <script is:inline>
+    window.addEventListener('DOMContentLoaded', () => {
+      if (!window.PagefindUI) {
+        document.getElementById('search').textContent =
+          "L'index de recherche n'est pas disponible (il est créé à la construction du site).";
+        return;
+      }
+      const ui = new PagefindUI({ element: '#search', showSubResults: true, showImages: true, resetStyles: false, autofocus: true });
+      const q = new URLSearchParams(location.search).get('q');
+      if (q) ui.triggerSearch(q);
+    });
+  </script>
+</Base>

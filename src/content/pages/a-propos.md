@@ -1,5 +1,7 @@
 ---
 title: "À PROPOS"
+menu: true
+menuOrder: 2
 cover: "../../assets/uploads/2018/10/DSC07021.jpg"
 ---
 

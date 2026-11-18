@@ -1,8 +1,8 @@
 ---
 title: "Veni Vidi Bici Video"
 date: 2019-01-14T12:55:31+00:00
-author: "Sims Teuteul"
-categories: ["Aventure"]
+author: sims
+categories: [aventure]
 cover: "../../assets/uploads/2018/11/VVB_ITALY_GENOVA_FLORENCE_GRAVIER_DIGITAL-21.jpg"
 ---
 

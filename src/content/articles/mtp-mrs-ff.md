@@ -1,8 +1,8 @@
 ---
 title: "MTP MRS FF"
 date: 2025-12-09T20:08:00+00:00
-author: "Julien Sommier"
-categories: ["Escapade"]
+author: julien
+categories: [escapade]
 cover: "../../assets/uploads/2026/02/DSF4783-1400x800.jpg"
 ---
 

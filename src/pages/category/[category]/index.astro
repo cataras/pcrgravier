@@ -1,22 +1,29 @@
 ---
+import { render } from 'astro:content';
 import Base from '../../../layouts/Base.astro';
 import ArticleGrid from '../../../components/ArticleGrid.astro';
-import { getArticles, getCategories, slugify } from '../../../lib/site';
+import { getArticles, getCategories } from '../../../lib/site';
 
 export async function getStaticPaths() {
   const articles = await getArticles();
-  return (await getCategories()).map((c) => ({
-    params: { category: c.slug },
-    props: { name: c.name, articles: articles.filter((a) => a.data.categories.some((x) => slugify(x) === c.slug)) },
-  }));
+  return (await getCategories())
+    .filter((c) => c.count)
+    .map(({ entry }) => ({
+      params: { category: entry.id },
+      props: { category: entry, articles: articles.filter((a) => a.data.categories.some((r) => r.id === entry.id)) },
+    }));
 }
-const { name, articles } = Astro.props;
+const { category, articles } = Astro.props;
+const { name, cover } = category.data;
+const { Content } = await render(category);
+const hasIntro = category.body?.trim();
 ---
 
-<Base title={name} description={`Articles de la catégorie ${name}`}>
+<Base title={name} description={`Articles de la catégorie ${name}`} image={cover}>
   <header class="list-header">
     <p class="kicker">Catégorie</p>
     <h1>{name}</h1>
+    {hasIntro && <div class="list-intro"><Content /></div>}
   </header>
   <ArticleGrid articles={articles} />
 </Base>

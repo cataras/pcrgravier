@@ -1,8 +1,8 @@
 ---
 title: "Glossaire du Gravier"
 date: 2019-04-10T12:54:06+00:00
-author: "Sims Teuteul"
-categories: ["Gear"]
+author: sims
+categories: [gear]
 ---
 
 **Si par malheur, à la lecture de notre site internet, certaines phrases ou explications ont pu vous sembler cocasses, ce glossaire illustré 100% gravier est fait pour vous ! En plus d’être fort ludique, il vous permettra aussi de manier avec brio la langue du castor lapon et pourquoi pas un jour de vous sortir d’une situation périlleuse.**

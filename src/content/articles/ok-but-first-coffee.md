@@ -1,8 +1,8 @@
 ---
 title: "Ok but first coffee"
 date: 2019-02-28T08:55:31+00:00
-author: "Sims Teuteul"
-categories: ["Hack"]
+author: sims
+categories: [hack]
 ---
 
 Difficile d’envisager un début de journée sans un bon café pour ouvrir correctement les yeux. Impossible de déroger à la règle, même en bikepacking au milieu de la pampa. Le café c’est sacré. Nous sommes quelques amateurs éclairés dans le groupe. Julien en a même fait son métier. Nous avons donc expérimenté de nombreuses façons d’extraire un bon café matinal dans les conditions les plus extrêmes, en respectant les principes de base du bike-packing , à savoir légèreté, et compacité. Voilà les quelques conclusions qui ressortent de nos expériences !

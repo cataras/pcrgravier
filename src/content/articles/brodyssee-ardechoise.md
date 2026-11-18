@@ -1,8 +1,8 @@
 ---
 title: "Brodyssée Ardéchoise"
 date: 2018-10-23T12:05:57+00:00
-author: "Sims Teuteul"
-categories: ["Aventure"]
+author: sims
+categories: [aventure]
 cover: "../../assets/uploads/2018/10/grande-traversee-ardechoise9.jpg"
 ---
 

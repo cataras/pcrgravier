@@ -1,8 +1,8 @@
 ---
 title: "Sur les traces de John Gravel"
 date: 2019-09-03T07:34:29+00:00
-author: "Sims Teuteul"
-categories: ["Escapade"]
+author: sims
+categories: [escapade]
 cover: "../../assets/uploads/2019/09/Nevers_003.jpg"
 ---
 

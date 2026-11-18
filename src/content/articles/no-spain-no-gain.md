@@ -1,8 +1,8 @@
 ---
 title: "No Spain No Gain"
 date: 2018-10-23T10:20:11+00:00
-author: "Sims Teuteul"
-categories: ["Aventure"]
+author: sims
+categories: [aventure]
 ---
 
 **NO SPAIN NO GAIN**

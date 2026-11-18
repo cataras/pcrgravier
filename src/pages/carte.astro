@@ -1,0 +1,125 @@
+---
+/**
+ * Carte de toutes les sorties : le tracé et le point de départ de chaque
+ * article qui a une trace RideWithGPS ou des coordonnées dans sa fiche.
+ * Fond de carte OpenStreetMap / OpenTopoMap : gratuits, sans compte.
+ */
+import { getImage } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import { getArticles, getCategories, mainCategory } from '../lib/site';
+import { getRide, simplify } from '../lib/rides';
+
+// Une couleur par catégorie, dans l'ordre des catégories
+const PALETTE = ['#c2410c', '#2f6f8f', '#6b7b5d', '#8e4585', '#a16207', '#0f766e', '#be123c'];
+const categories = (await getCategories()).filter((c) => c.count);
+const colorOf = new Map(categories.map((c, i) => [c.entry.id, PALETTE[i % PALETTE.length]]));
+
+const rides = [];
+for (const a of await getArticles()) {
+  const ride = await getRide(a);
+  if (ride?.lat === undefined || ride.lng === undefined) continue;
+  const cat = await mainCategory(a);
+  const thumb = a.data.cover ? (await getImage({ src: a.data.cover, width: 480, format: 'webp' })).src : null;
+  rides.push({
+    title: a.data.title,
+    href: `/${a.id}/`,
+    category: cat?.data.name ?? '',
+    color: (cat && colorOf.get(cat.id)) ?? '#0a0a0a',
+    thumb,
+    distance: ride.distance ?? null,
+    elevation: ride.elevation ?? null,
+    place: [ride.place, ride.region].filter(Boolean).join(', '),
+    lat: ride.lat,
+    lng: ride.lng,
+    // tracé allégé pour la carte (~80 m de précision, largement suffisant à cette échelle)
+    tracks: ride.tracks.map((t) => simplify(t, 0.0008).map(([la, ln]) => [+la.toFixed(4), +ln.toFixed(4)])),
+  });
+}
+const used = new Set(rides.map((r) => r.color));
+const legend = categories
+  .map((c) => ({ name: c.entry.data.name, color: colorOf.get(c.entry.id)! }))
+  .filter((l) => used.has(l.color));
+---
+
+<Base title="Carte des sorties" description="Toutes les aventures du collectif PCR Gravier sur une carte">
+  <header class="list-header">
+    <h1>Carte des sorties</h1>
+    <p class="list-intro">{rides.length} aventures, de la porte d'à côté au bout du monde. Clique sur un tracé pour lire le récit.</p>
+  </header>
+  <div class="map-wrap">
+    <div id="map" data-rides={JSON.stringify(rides)} role="region" aria-label="Carte des sorties"></div>
+    <ul class="map-legend">
+      {legend.map((l) => <li><span style={`background:${l.color}`}></span>{l.name}</li>)}
+    </ul>
+  </div>
+</Base>
+
+<script>
+  import L from 'leaflet';
+  import 'leaflet/dist/leaflet.css';
+
+  type RidePoint = {
+    title: string; href: string; category: string; color: string; thumb: string | null;
+    distance: number | null; elevation: number | null; place: string;
+    lat: number; lng: number; tracks: [number, number][][];
+  };
+
+  const el = document.getElementById('map')!;
+  const rides: RidePoint[] = JSON.parse(el.dataset.rides!);
+  const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+  const n = (v: number) => v.toLocaleString('fr-FR');
+
+  const plan = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">contributeurs OpenStreetMap</a>',
+  });
+  const relief = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+    maxZoom: 17,
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, SRTM | style © <a href="https://opentopomap.org">OpenTopoMap</a>',
+  });
+
+  const map = L.map(el, { layers: [relief], scrollWheelZoom: false });
+  L.control.layers({ Relief: relief, Plan: plan }, undefined, { position: 'topright' }).addTo(map);
+  // la molette ne zoome qu'après un clic sur la carte (pour ne pas bloquer le défilement de la page)
+  map.on('click', () => map.scrollWheelZoom.enable());
+  map.on('mouseout', () => map.scrollWheelZoom.disable());
+
+  // Vue de départ : le gros des sorties (les voyages lointains restent sur la carte en dézoomant)
+  const median = (xs: number[]) => xs.slice().sort((a, b) => a - b)[Math.floor(xs.length / 2)] ?? 0;
+  const center = L.latLng(median(rides.map((r) => r.lat)), median(rides.map((r) => r.lng)));
+  const bounds = L.latLngBounds([]);
+  for (const r of rides) {
+    const stats = [r.distance && `${n(r.distance)} km`, r.elevation && `${n(r.elevation)} m D+`].filter(Boolean).join(' · ');
+    const popup = `
+      <a class="map-card" href="${esc(r.href)}">
+        ${r.thumb ? `<img src="${esc(r.thumb)}" alt="" />` : ''}
+        <span class="map-card-body">
+          ${r.category ? `<span class="map-card-cat" style="color:${r.color}">${esc(r.category)}</span>` : ''}
+          <strong>${esc(r.title)}</strong>
+          ${stats ? `<span>${stats}</span>` : ''}
+          ${r.place ? `<span>${esc(r.place)}</span>` : ''}
+        </span>
+      </a>`;
+    const group = L.featureGroup();
+    const lines: L.Polyline[] = [];
+    for (const t of r.tracks) {
+      if (t.length > 1) {
+        L.polyline(t, { color: '#fff', weight: 6, opacity: 0.7, interactive: false }).addTo(group);
+        lines.push(L.polyline(t, { color: r.color, weight: 3.5, opacity: 0.95 }).addTo(group));
+      }
+    }
+    L.circleMarker([r.lat, r.lng], { radius: 7, color: '#fff', weight: 2, fillColor: r.color, fillOpacity: 1 })
+      .bindTooltip(esc(r.title), { direction: 'top', offset: [0, -6] })
+      .addTo(group);
+    group.bindPopup(popup, { maxWidth: 260, minWidth: 220 }).addTo(map);
+    group.on('mouseover', () => lines.forEach((l) => l.setStyle({ weight: 5.5 })));
+    group.on('mouseout', () => lines.forEach((l) => l.setStyle({ weight: 3.5 })));
+    if (center.distanceTo([r.lat, r.lng]) < 1_500_000) bounds.extend(group.getBounds());
+  }
+
+  // /carte/#44.56,6.49 : centre la carte sur une sortie (lien « Voir sur la carte »)
+  const m = location.hash.match(/^#(-?[\d.]+),(-?[\d.]+)$/);
+  if (m) map.setView([+m[1], +m[2]], 11);
+  else if (bounds.isValid()) map.fitBounds(bounds, { padding: [20, 20] });
+  else map.setView([46.6, 2.5], 6);
+</script>

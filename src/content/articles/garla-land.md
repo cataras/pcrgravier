@@ -1,8 +1,8 @@
 ---
 title: "Garla-Land"
 date: 2019-03-05T09:27:07+00:00
-author: "Sims Teuteul"
-categories: ["Escapade"]
+author: sims
+categories: [escapade]
 cover: "../../assets/uploads/2019/03/marseille-gravel-pcrgravier_01.jpg"
 ---
 

@@ -1,8 +1,8 @@
 ---
 title: "JURA-SICK PARK"
 date: 2020-08-06T15:18:16+00:00
-author: "Sims Teuteul"
-categories: ["Aventure"]
+author: sims
+categories: [aventure]
 cover: "../../assets/uploads/2020/08/JURASICKPARK_121-1400x800.jpg"
 ---
 

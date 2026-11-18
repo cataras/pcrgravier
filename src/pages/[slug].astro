@@ -3,56 +3,68 @@
  * Articles et pages, à la racine du site comme sur l'ancien WordPress
  * (/parpaillon/, /a-propos/…).
  */
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
-import { getCollection, render } from 'astro:content';
+import { render } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import ArticleCard from '../components/ArticleCard.astro';
-import { getArticles, slugify, authorSlug, formatDate } from '../lib/site';
+import RideSheet from '../components/RideSheet.astro';
+import { getArticles, getPages, mainCategory, getAuthor, formatDate } from '../lib/site';
+import { getRide } from '../lib/rides';
+import { getRelated } from '../lib/related';
 
 export async function getStaticPaths() {
   const articles = await getArticles();
-  const pages = await getCollection('pages');
+  const pages = await getPages();
   return [
-    ...articles.map((entry, i) => ({
-      params: { slug: entry.id },
-      props: { entry, kind: 'article' as const, newer: articles[i - 1], older: articles[i + 1] },
-    })),
+    ...(await Promise.all(
+      articles.map(async (entry) => ({
+        params: { slug: entry.id },
+        props: { entry, kind: 'article' as const, related: await getRelated(entry, articles) },
+      })),
+    )),
     ...pages.map((entry) => ({ params: { slug: entry.id }, props: { entry, kind: 'page' as const } })),
   ];
 }
 
-const { entry, kind, newer, older } = Astro.props;
+const { entry, kind, related = [] } = Astro.props;
 const { Content } = await render(entry);
-const data = entry.data as { title: string; cover?: ImageMetadata; date?: Date; author?: string; categories?: string[] };
-const category = data.categories?.[0];
+const data = entry.data as { title: string; description?: string; cover?: ImageMetadata; date?: Date };
+const category = kind === 'article' ? await mainCategory(entry) : undefined;
+const author = kind === 'article' ? await getAuthor(entry) : undefined;
+const ride = kind === 'article' ? await getRide(entry) : undefined;
+// Vignette affichée dans les résultats de recherche
+const coverThumb = data.cover ? (await getImage({ src: data.cover, width: 320, format: 'webp' })).src : undefined;
 ---
 
-<Base title={data.title} image={data.cover} overlayHeader>
+<Base title={data.title} description={data.description} image={data.cover} overlayHeader>
   <section class:list={['hero', { 'hero-page': kind === 'page' }]}>
     {data.cover && <Image src={data.cover} alt="" layout="full-width" loading="eager" fetchpriority="high" />}
     <div class="hero-content">
-      {category && <a class="pill" href={`/category/${slugify(category)}/`}>{category}</a>}
+      {category && <a class="pill" href={`/category/${category.id}/`} data-pagefind-ignore>{category.data.name}</a>}
       <h1>{data.title}</h1>
       {kind === 'article' && data.date && (
         <p class="meta">
           <time datetime={data.date.toISOString()}>{formatDate(data.date)}</time>
-          {data.author && <> · <a href={`/author/${authorSlug(data.author)}/`}>{data.author}</a></>}
+          {author && <> · <a href={`/author/${author.id}/`}>{author.data.name}</a></>}
         </p>
       )}
     </div>
   </section>
 
-  <article class="prose">
+  {ride && <RideSheet ride={ride} />}
+
+  <article class="prose" data-pagefind-body>
+    <h1 class="visually-hidden">{data.title}</h1>
+    {data.cover && <img class="visually-hidden" src={coverThumb} alt="" data-pagefind-meta="image[src]" />}
     <Content />
   </article>
 
-  {kind === 'article' && (newer || older) && (
-    <nav class="post-nav" aria-label="Autres articles">
-      <h2 class="visually-hidden">Autres articles</h2>
+  {related.length > 0 && (
+    <nav class="post-nav" aria-labelledby="related-title">
+      <h2 id="related-title" class="section-title">À lire aussi</h2>
       <div class="grid">
-        {older && <ArticleCard article={older} />}
-        {newer && <ArticleCard article={newer} />}
+        {related.map((a) => <ArticleCard article={a} />)}
       </div>
     </nav>
   )}

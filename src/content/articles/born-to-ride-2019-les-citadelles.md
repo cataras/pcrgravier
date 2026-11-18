@@ -1,8 +1,8 @@
 ---
 title: "Born To Ride 2019 - Les Citadelles"
 date: 2019-10-18T08:59:46+00:00
-author: "Sims Teuteul"
-categories: ["Aventure"]
+author: sims
+categories: [aventure]
 cover: "../../assets/uploads/2019/10/born_to_ride_2019-3.jpg"
 ---
 

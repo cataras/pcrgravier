@@ -1,8 +1,8 @@
 ---
 title: "Brovence"
 date: 2020-11-21T21:24:12+00:00
-author: "Sims Teuteul"
-categories: ["Aventure"]
+author: sims
+categories: [aventure]
 cover: "../../assets/uploads/2020/11/pcr-gravier-brovence-gravel-bikepacking_001-31-1400x800.jpg"
 ---
 
