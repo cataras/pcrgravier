@@ -36,6 +36,14 @@ if [ ! -f "$tmp/index.html" ] || [ ! -f "$tmp/404.html" ]; then
   exit 1
 fi
 
+# Le dossier temporaire est privé (700) : rsync recopierait ces droits et ce groupe sur
+# public_html, et Apache ne pourrait plus y entrer. On lui donne ceux de public_html
+# (750 chez Virtualmin), sauf s'ils sont déjà cassés (700).
+mode=$(stat -c %a "$DEST" 2>/dev/null || echo 750)
+[ "$mode" = 700 ] && mode=750
+chmod "$mode" "$tmp"
+chgrp --reference="$DEST" "$tmp" 2>/dev/null || true
+
 # .well-known (Let's Encrypt) et les dossiers de Virtualmin ne sont pas touchés
 rsync -a --delete \
   --exclude='/.well-known/' --exclude='/stats/' --exclude='/awstats*' --exclude='/cgi-bin/' \
