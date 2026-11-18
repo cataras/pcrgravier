@@ -96,6 +96,32 @@ fabrique un index de recherche statique dans `dist/pagefind/`, utilisé par la
 page `/recherche/` (aucun serveur ni service extérieur). Avec `npm run dev`,
 l'index n'existe pas : tester la recherche avec `npm run build && npm run preview`.
 
+## Organisation du code
+
+```
+src/
+  content/            contenus gérés par le CMS (articles, pages, auteurs, catégories, réglages)
+  content.config.ts   schéma de chaque contenu (champs, types, valeurs par défaut)
+  layouts/Base.astro  squelette HTML commun
+  components/layout/  en-tête, pied de page, SEO, statistiques, visionneuse
+  components/         vignettes, en-tête d'article, fiche de sortie…
+  lib/site.ts         accès aux contenus, adresses, formats, résumés, vignettes
+  lib/rides.ts        fiches de sortie (traces RideWithGPS)
+  lib/related.ts      « À lire aussi »
+  lib/videos.ts       vidéos des articles
+  plugins/            transformations du Markdown (intégrations, galeries)
+  pages/              routes du site
+scripts/              import WordPress, photos retrouvées, déploiement
+```
+
+Avant de committer une modification du code : `npm run check` (types) puis
+`npm run build`.
+
+SEO : chaque page a son titre, son résumé (champ « Résumé » ou début du
+texte), son image de partage, une adresse canonique et des données
+structurées (schema.org `BlogPosting` pour les articles, `WebSite` pour
+l'accueil). `robots.txt` et le plan du site sont générés automatiquement.
+
 ## Import depuis WordPress
 
 `scripts/import-wordpress.mjs` convertit le contenu récupéré

@@ -6,7 +6,7 @@ import { z } from 'astro/zod';
  * Le CMS écrit une chaîne vide ('') quand un champ facultatif est laissé vide :
  * on la traite comme « pas de valeur ».
  */
-const blank = <T extends z.ZodTypeAny>(schema: T) =>
+const blank = <T extends z.ZodType>(schema: T) =>
   z.preprocess((v) => (v === '' || v === null ? undefined : v), schema.optional());
 
 /** Réglages généraux, modifiables depuis le CMS (src/content/settings/site.json) */
@@ -20,9 +20,9 @@ const settings = defineCollection({
       quote: z.string(),
       hero: image(),
       heroAlt: z.string().default(''),
-      email: z.string().email(),
-      instagram: blank(z.string().url()),
-      facebook: blank(z.string().url()),
+      email: z.email(),
+      instagram: blank(z.url()),
+      facebook: blank(z.url()),
       footer: z.string().default(''),
     }),
 });
@@ -34,7 +34,7 @@ const authors = defineCollection({
     z.object({
       name: z.string(),
       photo: blank(image()),
-      instagram: blank(z.string().url()),
+      instagram: blank(z.url()),
     }),
 });
 
@@ -54,6 +54,8 @@ const articles = defineCollection({
   schema: ({ image }) =>
     z.object({
       title: z.string(),
+      /** Résumé pour les moteurs de recherche et les partages (sinon : début du texte) */
+      description: blank(z.string()),
       date: z.coerce.date(),
       author: blank(reference('authors')),
       categories: z.array(reference('categories')).default([]),

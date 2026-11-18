@@ -4,28 +4,30 @@ import '@fontsource/roboto-condensed/400.css';
 import '@fontsource/roboto-condensed/700.css';
 import '@fontsource/roboto-condensed/900.css';
 import '../styles/global.css';
-import { Image, getImage } from 'astro:assets';
+// Polices du texte et des grands titres : préchargées pour éviter le changement de police à l'affichage
+import fontBody from '@fontsource/doppio-one/files/doppio-one-latin-400-normal.woff2?url';
+import fontTitle from '@fontsource/roboto-condensed/files/roboto-condensed-latin-900-normal.woff2?url';
 import type { ImageMetadata } from 'astro';
-import logo from '../assets/site/logo.png';
-import { getSettings, getNav, getArticles, getCategories } from '../lib/site';
+import Seo, { type ArticleMeta } from '../components/layout/Seo.astro';
+import Analytics from '../components/layout/Analytics.astro';
+import SiteHeader from '../components/layout/SiteHeader.astro';
+import SiteFooter from '../components/layout/SiteFooter.astro';
+import Lightbox from '../components/layout/Lightbox.astro';
+import { getSettings } from '../lib/site';
 
 interface Props {
   title?: string;
   description?: string;
   image?: ImageMetadata;
+  article?: ArticleMeta;
+  noindex?: boolean;
   /** En-tête transparent posé sur une grande photo */
   overlayHeader?: boolean;
+  /** Page avec des photos à agrandir (articles, pages) */
+  lightbox?: boolean;
 }
-const SITE = await getSettings();
-const NAV = await getNav();
-const { title, description = SITE.description, image, overlayHeader = false } = Astro.props;
-const isCurrent = (href: string) => (href === '/' ? Astro.url.pathname === '/' : Astro.url.pathname.startsWith(href));
-const fullTitle = title ? `${title} – ${SITE.title}` : `${SITE.title} – ${SITE.tagline}`;
-const canonical = new URL(Astro.url.pathname, Astro.site);
-const ogImage = image ? new URL((await getImage({ src: image, width: 1200, format: 'jpg' })).src, Astro.site) : undefined;
-
-const recent = (await getArticles()).slice(0, 5);
-const categories = await getCategories();
+const { overlayHeader = false, lightbox = false, ...seo } = Astro.props;
+const site = await getSettings();
 ---
 
 <!doctype html>
@@ -33,169 +35,23 @@ const categories = await getCategories();
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{fullTitle}</title>
-    <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
+    <Seo {...seo} />
+    <link rel="preload" href={fontBody} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={fontTitle} as="font" type="font/woff2" crossorigin />
+    <meta name="theme-color" content="#0a0a0a" />
     <link rel="icon" href="/favicon.jpg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.jpg" />
-    <link rel="alternate" type="application/rss+xml" title={SITE.title} href="/rss.xml" />
+    <link rel="alternate" type="application/rss+xml" title={site.title} href="/rss.xml" />
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <meta property="og:site_name" content={SITE.title} />
-    <meta property="og:title" content={title ?? SITE.title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
-    {ogImage && <meta property="og:image" content={ogImage} />}
-    <meta name="twitter:card" content="summary_large_image" />
-    <!-- Matomo (statistiques de visite) -->
-    <script is:inline>
-      var _paq = window._paq = window._paq || [];
-      /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-      // sans cookie : pas besoin de bandeau de consentement (exemption CNIL)
-      _paq.push(['disableCookies']);
-      _paq.push(['trackPageView']);
-      _paq.push(['enableLinkTracking']);
-      (function() {
-        var u="https://analytics.danslaroue.cc/";
-        _paq.push(['setTrackerUrl', u+'matomo.php']);
-        _paq.push(['setSiteId', '8']);
-        var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-        g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
-      })();
-    </script>
-    <!-- End Matomo Code -->
+    <Analytics />
   </head>
   <body>
-    <header class:list={['site-header', { overlay: overlayHeader }]}>
-      <ul class="social">
-        {SITE.facebook && <li><a href={SITE.facebook} aria-label="Facebook" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4h-3c-2.8 0-4.5 1.8-4.5 4.6V11H7v4h2.5v9h4v-9H17l.6-4h-4.1V9c0-.6.4-1 1-1Z"/></svg>
-        </a></li>}
-        {SITE.instagram && <li><a href={SITE.instagram} aria-label="Instagram" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7.3A4.7 4.7 0 1 0 12 16.7 4.7 4.7 0 0 0 12 7.3Zm0 7.7a3 3 0 1 1 0-6 3 3 0 0 1 0 6Zm6-7.9a1.1 1.1 0 1 1-2.2 0 1.1 1.1 0 0 1 2.2 0ZM21.9 8c-.1-1.6-.4-3-1.6-4.2S17.6 2.2 16 2.1C14.4 2 9.6 2 8 2.1 6.4 2.2 5 2.5 3.8 3.7S2.2 6.4 2.1 8C2 9.6 2 14.4 2.1 16c.1 1.6.4 3 1.6 4.2s2.6 1.5 4.2 1.6c1.6.1 6.4.1 8 0 1.6-.1 3-.4 4.2-1.6s1.5-2.6 1.6-4.2c.1-1.6.1-6.4 0-8Zm-2.1 9.9a3.3 3.3 0 0 1-1.9 1.9c-1.3.5-4.4.4-5.9.4s-4.6.1-5.9-.4a3.3 3.3 0 0 1-1.9-1.9C3.7 16.6 3.8 13.5 3.8 12s-.1-4.6.4-5.9a3.3 3.3 0 0 1 1.9-1.9c1.3-.5 4.4-.4 5.9-.4s4.6-.1 5.9.4a3.3 3.3 0 0 1 1.9 1.9c.5 1.3.4 4.4.4 5.9s.1 4.6-.4 5.9Z"/></svg>
-        </a></li>}
-        <li><a href={`mailto:${SITE.email}`} aria-label="E-mail">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18v14H3V5Zm2 2v.5l7 4.7 7-4.7V7H5Zm14 2.9-7 4.7-7-4.7V17h14V9.9Z"/></svg>
-        </a></li>
-      </ul>
-      <a class="logo" href="/" aria-label={`${SITE.title} – accueil`}>
-        <Image src={logo} alt={SITE.title} width={120} height={72} layout="fixed" loading="eager" />
-      </a>
-      <div class="header-end">
-        <nav class="nav-inline" aria-label="Menu principal">
-          <ul>
-            {NAV.map((item) => (
-              <li><a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>{item.label}</a></li>
-            ))}
-          </ul>
-        </nav>
-        <a class="search-link" href="/recherche/" aria-label="Rechercher">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 3a7.5 7.5 0 0 1 5.96 12.05l4.25 4.24-1.42 1.42-4.24-4.25A7.5 7.5 0 1 1 10.5 3Zm0 2a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11Z"/></svg>
-        </a>
-        <button class="menu-toggle" aria-expanded="false" aria-controls="menu" aria-label="Menu">
-          <span></span>
-        </button>
-      </div>
-      <nav id="menu" class="menu" hidden aria-label="Menu">
-        <ul>
-          {NAV.map((item) => (
-            <li><a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>{item.label}</a></li>
-          ))}
-        </ul>
-      </nav>
-    </header>
-
-    <main>
+    <a class="skip-link" href="#contenu">Aller au contenu</a>
+    <SiteHeader overlay={overlayHeader} />
+    <main id="contenu">
       <slot />
     </main>
-
-    <footer class="site-footer">
-      <div class="footer-cols">
-        <section>
-          <h2>À propos</h2>
-          <p>{SITE.description}</p>
-        </section>
-        <section>
-          <h2>Articles récents</h2>
-          <ul>{recent.map((a) => <li><a href={`/${a.id}/`}>{a.data.title}</a></li>)}</ul>
-        </section>
-        <section>
-          <h2>Catégories</h2>
-          <ul>{categories.filter((c) => c.count).map((c) => <li><a href={`/category/${c.entry.id}/`}>{c.entry.data.name} ({c.count})</a></li>)}</ul>
-        </section>
-      </div>
-      <p class="copyright">{new Date().getFullYear()} {SITE.footer}</p>
-    </footer>
-
-    <dialog class="lightbox" aria-label="Photo agrandie">
-      <button class="lightbox-close" aria-label="Fermer">×</button>
-      <button class="lightbox-prev" aria-label="Photo précédente">‹</button>
-      <figure>
-        <img alt="" />
-        <figcaption><span class="lightbox-count"></span><span class="lightbox-caption"></span></figcaption>
-      </figure>
-      <button class="lightbox-next" aria-label="Photo suivante">›</button>
-    </dialog>
-
-    <script>
-      // Menu
-      const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle')!;
-      const menu = document.querySelector<HTMLElement>('#menu')!;
-      toggle.addEventListener('click', () => {
-        const open = toggle.getAttribute('aria-expanded') !== 'true';
-        toggle.setAttribute('aria-expanded', String(open));
-        menu.hidden = !open;
-        document.body.classList.toggle('menu-open', open);
-      });
-
-      // En-tête : passe en fond plein quand on défile
-      const header = document.querySelector('.site-header')!;
-      const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 40);
-      addEventListener('scroll', onScroll, { passive: true });
-      onScroll();
-
-      // Visionneuse photo : flèches, clavier, glisser du doigt, légende et compteur
-      const photos = [...document.querySelectorAll<HTMLImageElement>('.prose figure img')];
-      const box = document.querySelector<HTMLDialogElement>('.lightbox')!;
-      const boxImg = box.querySelector('img')!;
-      const count = box.querySelector('.lightbox-count')!;
-      const caption = box.querySelector('.lightbox-caption')!;
-      // la plus grande version disponible dans le srcset
-      const largest = (img: HTMLImageElement) =>
-        (img.srcset ? img.srcset.split(',').map((s) => s.trim().split(' ')[0]).at(-1) : null) || img.currentSrc || img.src;
-      let current = 0;
-      const show = (i: number) => {
-        current = (i + photos.length) % photos.length;
-        const img = photos[current];
-        boxImg.src = largest(img);
-        boxImg.alt = img.alt;
-        count.textContent = photos.length > 1 ? `${current + 1} / ${photos.length}` : '';
-        caption.textContent = img.alt;
-        // précharge les photos voisines
-        for (const k of [current + 1, current - 1]) new Image().src = largest(photos[(k + photos.length) % photos.length]);
-      };
-      box.classList.toggle('single', photos.length < 2);
-      photos.forEach((img, i) => {
-        img.addEventListener('click', () => { show(i); box.showModal(); });
-      });
-      box.querySelector('.lightbox-close')!.addEventListener('click', () => box.close());
-      box.querySelector('.lightbox-prev')!.addEventListener('click', () => show(current - 1));
-      box.querySelector('.lightbox-next')!.addEventListener('click', () => show(current + 1));
-      box.addEventListener('click', (e) => { if (e.target === box || e.target === box.querySelector('figure')) box.close(); });
-      addEventListener('keydown', (e) => {
-        if (!box.open) return;
-        if (e.key === 'ArrowLeft') show(current - 1);
-        if (e.key === 'ArrowRight') show(current + 1);
-      });
-      // glisser du doigt : gauche/droite pour changer de photo, vers le bas pour fermer
-      let start: { x: number; y: number } | null = null;
-      box.addEventListener('touchstart', (e) => { start = { x: e.touches[0].clientX, y: e.touches[0].clientY }; }, { passive: true });
-      box.addEventListener('touchend', (e) => {
-        if (!start) return;
-        const dx = e.changedTouches[0].clientX - start.x, dy = e.changedTouches[0].clientY - start.y;
-        start = null;
-        if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) show(current + (dx < 0 ? 1 : -1));
-        else if (dy > 80 && dy > Math.abs(dx)) box.close();
-      });
-    </script>
+    <SiteFooter />
+    {lightbox && <Lightbox />}
   </body>
 </html>

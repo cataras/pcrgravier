@@ -8,7 +8,7 @@
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import ArticleGrid from '../components/ArticleGrid.astro';
-import { getSettings, getArticles, getCategories } from '../lib/site';
+import { getSettings, getArticles, getCategories, url } from '../lib/site';
 
 const SITE = await getSettings();
 const hero = SITE.hero;
@@ -28,7 +28,7 @@ const categories = (await getCategories()).filter((c) => c.count);
   <nav class="filters" aria-label="Filtrer les récits par catégorie">
     <a href="/" data-filter="" aria-pressed="true">Tout <span>{articles.length}</span></a>
     {categories.map((c) => (
-      <a href={`/category/${c.entry.id}/`} data-filter={c.entry.id} aria-pressed="false">
+      <a href={url.category(c.entry.id)} data-filter={c.entry.id} aria-pressed="false">
         {c.entry.data.name} <span>{c.count}</span>
       </a>
     ))}

@@ -2,7 +2,6 @@
  * Vidéos des articles : toute adresse Vimeo ou YouTube seule sur sa ligne.
  * Sert à la page Vidéos (case « Ajouter les vidéos des articles » dans le CMS).
  */
-// @ts-expect-error module JavaScript sans types
 import { embedFor } from '../plugins/remark-embeds.mjs';
 import type { Article } from './site';
 

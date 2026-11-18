@@ -1,31 +1,35 @@
 ---
 import { Image } from 'astro:assets';
-import { mainCategory, type Article } from '../lib/site';
+import CategoryPill from './CategoryPill.astro';
+import { mainCategory, url, type Article } from '../lib/site';
 
 interface Props {
   article: Article;
+  /** Grande vignette (deux premiers récits de l'accueil) */
   large?: boolean;
   eager?: boolean;
 }
 const { article, large = false, eager = false } = Astro.props;
-const { title, cover } = article.data;
+const { title, cover, categories } = article.data;
 const category = await mainCategory(article);
+// tailles d'affichage, d'après la grille (3 colonnes, 2 sous 960 px, 1 sous 600 px)
+const sizes = large ? '(max-width: 600px) 100vw, 50vw' : '(max-width: 600px) 100vw, (max-width: 960px) 50vw, 33vw';
 ---
 
-<article class:list={['card', { large }]} data-categories={article.data.categories.map((c) => c.id).join(' ')}>
+<article class:list={['card', { large }]} data-categories={categories.map((c) => c.id).join(' ')}>
   {cover && (
     <Image
       src={cover}
       alt=""
       widths={large ? [640, 960, 1400] : [480, 720, 960]}
-      sizes={large ? '(max-width: 760px) 100vw, 50vw' : '(max-width: 760px) 100vw, 33vw'}
+      sizes={sizes}
       layout="full-width"
       loading={eager ? 'eager' : 'lazy'}
       style={`view-transition-name: cover-${article.id}`}
     />
   )}
   <div class="card-body">
-    {category && <a class="pill" href={`/category/${category.id}/`}>{category.data.name}</a>}
-    <h2><a href={`/${article.id}/`}>{title}</a></h2>
+    {category && <CategoryPill category={category} />}
+    <h2><a href={url.entry(article.id)}>{title}</a></h2>
   </div>
 </article>

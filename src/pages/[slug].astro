@@ -3,81 +3,74 @@
  * Articles et pages, à la racine du site comme sur l'ancien WordPress
  * (/parpaillon/, /a-propos/…).
  */
-import { Image, getImage } from 'astro:assets';
-import type { ImageMetadata } from 'astro';
 import { render } from 'astro:content';
 import Base from '../layouts/Base.astro';
+import EntryHero from '../components/EntryHero.astro';
 import ArticleCard from '../components/ArticleCard.astro';
 import RideSheet from '../components/RideSheet.astro';
-import { getArticles, getPages, mainCategory, getAuthor, formatDate } from '../lib/site';
+import { getArticles, getPages, mainCategory, getAuthor, excerpt, thumbnail, formatDate, url, type Article, type Page } from '../lib/site';
 import { getRide } from '../lib/rides';
 import { getRelated } from '../lib/related';
 import { articleVideos, videoUrls } from '../lib/videos';
 
+type Props = { kind: 'article'; entry: Article; related: Article[] } | { kind: 'page'; entry: Page };
+
 export async function getStaticPaths() {
   const articles = await getArticles();
-  const pages = await getPages();
   return [
     ...(await Promise.all(
       articles.map(async (entry) => ({
         params: { slug: entry.id },
-        props: { entry, kind: 'article' as const, related: await getRelated(entry, articles) },
+        props: { kind: 'article', entry, related: await getRelated(entry, articles) } satisfies Props,
       })),
     )),
-    ...pages.map((entry) => ({ params: { slug: entry.id }, props: { entry, kind: 'page' as const } })),
+    ...(await getPages()).map((entry) => ({ params: { slug: entry.id }, props: { kind: 'page', entry } satisfies Props })),
   ];
 }
 
-const { entry, kind, related = [] } = Astro.props;
+const props = Astro.props;
+const { entry } = props;
+const { title, cover } = entry.data;
 const { Content } = await render(entry);
-const data = entry.data as { title: string; description?: string; cover?: ImageMetadata; date?: Date };
-const category = kind === 'article' ? await mainCategory(entry) : undefined;
-const author = kind === 'article' ? await getAuthor(entry) : undefined;
-const ride = kind === 'article' ? await getRide(entry) : undefined;
-// page « Vidéos » : les vidéos des articles, sauf celles déjà présentes dans le texte de la page
-const videos = kind === 'page' && entry.data.videos ? articleVideos(await getArticles(), videoUrls(entry.body)) : [];
-// Vignette affichée dans les résultats de recherche
-const coverThumb = data.cover ? (await getImage({ src: data.cover, width: 320, format: 'webp' })).src : undefined;
+const description = entry.data.description ?? excerpt(entry.body);
+
+const isArticle = props.kind === 'article';
+const category = isArticle ? await mainCategory(props.entry) : undefined;
+const author = isArticle ? await getAuthor(props.entry) : undefined;
+const ride = isArticle ? await getRide(props.entry) : undefined;
+const date = isArticle ? props.entry.data.date : undefined;
+const related = isArticle ? props.related : [];
+// option « Ajouter les vidéos des articles » : sauf celles déjà dans le texte de la page
+const videos = !isArticle && props.entry.data.videos ? articleVideos(await getArticles(), videoUrls(entry.body)) : [];
+// vignette affichée dans les résultats de la recherche
+const searchThumb = cover ? await thumbnail(cover, 320) : undefined;
 ---
 
-<Base title={data.title} description={data.description} image={data.cover} overlayHeader>
-  <section class:list={['hero', { 'hero-page': kind === 'page' }]}>
-    {data.cover && (
-      <Image
-        src={data.cover}
-        alt=""
-        layout="full-width"
-        loading="eager"
-        fetchpriority="high"
-        style={`view-transition-name: cover-${entry.id}`}
-      />
-    )}
-    <div class="hero-content">
-      {category && <a class="pill" href={`/category/${category.id}/`} data-pagefind-ignore>{category.data.name}</a>}
-      <h1>{data.title}</h1>
-      {kind === 'article' && data.date && (
-        <p class="meta">
-          <time datetime={data.date.toISOString()}>{formatDate(data.date)}</time>
-          {author && <> · <a href={`/author/${author.id}/`}>{author.data.name}</a></>}
-        </p>
-      )}
-    </div>
-  </section>
+<Base
+  title={title}
+  description={description}
+  image={cover}
+  article={date ? { published: date, author: author?.data.name, section: category?.data.name } : undefined}
+  overlayHeader
+  lightbox
+>
+  <div data-pagefind-body>
+    {searchThumb && <img class="visually-hidden" src={searchThumb} alt="" data-pagefind-meta="image[src]" />}
+    <EntryHero id={entry.id} title={title} cover={cover} date={date} author={author} category={category} compact={!isArticle} />
 
-  {ride && <RideSheet ride={ride} />}
+    {ride && <RideSheet ride={ride} />}
 
-  <article class="prose" data-pagefind-body>
-    <h1 class="visually-hidden">{data.title}</h1>
-    {data.cover && <img class="visually-hidden" src={coverThumb} alt="" data-pagefind-meta="image[src]" />}
-    <Content />
-    {videos.map(({ html, article }) => (
-      <section class="video-item">
-        <h2><a href={`/${article.id}/`}>{article.data.title}</a></h2>
-        <p class="video-date">{formatDate(article.data.date)} · <a href={`/${article.id}/`}>Lire le récit</a></p>
-        <Fragment set:html={html} />
-      </section>
-    ))}
-  </article>
+    <article class="prose">
+      <Content />
+      {videos.map(({ html, article }) => (
+        <section class="video-item">
+          <h2><a href={url.entry(article.id)}>{article.data.title}</a></h2>
+          <p class="video-date">{formatDate(article.data.date)} · <a href={url.entry(article.id)}>Lire le récit</a></p>
+          <Fragment set:html={html} />
+        </section>
+      ))}
+    </article>
+  </div>
 
   {related.length > 0 && (
     <nav class="post-nav" aria-labelledby="related-title">

@@ -8,9 +8,8 @@
  *   - ombrage du relief et courbes de niveau calculés dans le navigateur à
  *     partir des altitudes publiques « Terrain Tiles » d'AWS.
  */
-import { getImage } from 'astro:assets';
 import Base from '../layouts/Base.astro';
-import { getArticles, getCategories, mainCategory } from '../lib/site';
+import { getArticles, getCategories, mainCategory, thumbnail, url } from '../lib/site';
 import { getRide, simplify } from '../lib/rides';
 
 // Une couleur par catégorie, dans l'ordre des catégories
@@ -23,10 +22,10 @@ for (const a of await getArticles()) {
   const ride = await getRide(a);
   if (ride?.lat === undefined || ride.lng === undefined) continue;
   const cat = await mainCategory(a);
-  const thumb = a.data.cover ? (await getImage({ src: a.data.cover, width: 480, format: 'webp' })).src : null;
+  const thumb = a.data.cover ? await thumbnail(a.data.cover, 480) : null;
   rides.push({
     title: a.data.title,
-    href: `/${a.id}/`,
+    href: url.entry(a.id),
     category: cat?.data.name ?? '',
     color: (cat && colorOf.get(cat.id)) ?? '#0a0a0a',
     thumb,
@@ -59,6 +58,8 @@ const legend = categories
 </Base>
 
 <script>
+  import type { FeatureCollection } from 'geojson';
+
   // MapLibre (~270 Ko compressés) n'est téléchargé qu'à l'approche de la carte :
   // le reste de la page s'affiche sans l'attendre.
 
@@ -99,11 +100,11 @@ const legend = categories
           geometry: { type: 'LineString', coordinates: t.map(([la, ln]) => [ln, la]) },
         })),
       ),
-    } as GeoJSON.FeatureCollection;
+    } as FeatureCollection;
     const starts = {
       type: 'FeatureCollection',
       features: rides.map((r, i) => ({ type: 'Feature', properties: props(r, i), geometry: { type: 'Point', coordinates: [r.lng, r.lat] } })),
-    } as GeoJSON.FeatureCollection;
+    } as FeatureCollection;
 
     // Vue de départ : le gros des sorties (les voyages lointains restent visibles en dézoomant)
     const median = (xs: number[]) => xs.slice().sort((a, b) => a - b)[Math.floor(xs.length / 2)] ?? 0;

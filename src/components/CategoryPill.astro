@@ -1,0 +1,10 @@
+---
+import { url, type Category } from '../lib/site';
+
+interface Props {
+  category: Category;
+}
+const { category } = Astro.props;
+---
+
+<a class="pill" href={url.category(category.id)} data-pagefind-ignore>{category.data.name}</a>

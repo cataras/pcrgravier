@@ -194,13 +194,6 @@ body.menu-open .site-header { background: var(--night); }
 .list-header h1 { margin: 0; font-size: clamp(2.2rem, 6vw, 3.6rem); font-weight: 900; }
 .kicker { margin: 0; font: 700 0.8rem/1 var(--font-title); text-transform: uppercase; letter-spacing: 0.15em; color: var(--muted); }
 
-.pagination {
-  display: flex; justify-content: space-between; align-items: center; gap: 1rem;
-  max-width: var(--wide); margin: 0 auto; padding: 2.5rem 1rem;
-  font: 700 1rem var(--font-title); text-transform: uppercase; letter-spacing: 0.06em;
-}
-.pagination a { text-decoration: none; }
-.pagination .pages { color: var(--muted); }
 
 /* ------------------------------------------------------------ article */
 .prose { max-width: var(--measure); margin: 0 auto; padding: 3.5rem 1rem 4rem; }
@@ -392,3 +385,7 @@ button[type='submit']:hover, .button:hover { background: var(--accent); color: #
   font: 700 0.9rem var(--font-title); text-transform: uppercase; letter-spacing: 0.12em; color: var(--ink);
 }
 .more:hover { background: var(--ink); color: var(--paper); }
+
+/* lien d'évitement (clavier, lecteurs d'écran) */
+.skip-link { position: absolute; left: 1rem; top: -4rem; z-index: 100; padding: 0.6rem 1rem; background: var(--paper); color: var(--ink); font: 700 0.9rem var(--font-title); }
+.skip-link:focus { top: 1rem; }

@@ -1,0 +1,42 @@
+---
+/** Grande photo d'en-tête d'un article ou d'une page, avec titre et infos. */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import CategoryPill from './CategoryPill.astro';
+import { formatDate, url, type Author, type Category } from '../lib/site';
+
+interface Props {
+  id: string;
+  title: string;
+  cover?: ImageMetadata;
+  date?: Date;
+  author?: Author;
+  category?: Category;
+  /** Hauteur réduite (pages) */
+  compact?: boolean;
+}
+const { id, title, cover, date, author, category, compact = false } = Astro.props;
+---
+
+<section class:list={['hero', { 'hero-page': compact }]}>
+  {cover && (
+    <Image
+      src={cover}
+      alt=""
+      layout="full-width"
+      loading="eager"
+      fetchpriority="high"
+      style={`view-transition-name: cover-${id}`}
+    />
+  )}
+  <div class="hero-content">
+    {category && <CategoryPill category={category} />}
+    <h1>{title}</h1>
+    {date && (
+      <p class="meta" data-pagefind-ignore>
+        <time datetime={date.toISOString()}>{formatDate(date)}</time>
+        {author && <> · <a href={url.author(author.id)}>{author.data.name}</a></>}
+      </p>
+    )}
+  </div>
+</section>

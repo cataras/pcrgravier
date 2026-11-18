@@ -29,12 +29,33 @@ RewriteRule ^(page-d-exemple|category/non-classe)/?$ / [R=301,L]
 # Ancienne interface d'administration
 RewriteRule ^(wp-admin(/.*)?|wp-login\.php)$ /admin/ [R=302,L]
 
+# Sécurité : en-têtes recommandés (le site n'a rien à cacher, mais autant bien faire)
+<IfModule mod_headers.c>
+  Header always set Strict-Transport-Security "max-age=31536000"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+</IfModule>
+
+# Compression des fichiers texte (si le serveur ne le fait pas déjà)
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/xml text/plain application/javascript application/json application/xml application/rss+xml image/svg+xml
+</IfModule>
+
 # Les fichiers de /_astro/ ont un nom qui change à chaque modification :
 # le navigateur peut les garder un an. Les pages HTML, elles, sont revérifiées.
 <IfModule mod_headers.c>
   <If "%{REQUEST_URI} =~ m#^/_astro/#">
     Header set Cache-Control "public, max-age=31536000, immutable"
   </If>
+  <ElseIf "%{REQUEST_URI} =~ m#^/pagefind/#">
+    # index de recherche : reconstruit à chaque publication
+    Header set Cache-Control "public, max-age=3600"
+  </ElseIf>
+  <ElseIf "%{REQUEST_URI} =~ m#\.(jpe?g|png|ico)$#">
+    Header set Cache-Control "public, max-age=604800"
+  </ElseIf>
   <ElseIf "%{REQUEST_URI} =~ m#(/|\.html)$#">
     Header set Cache-Control "public, max-age=0, must-revalidate"
   </ElseIf>

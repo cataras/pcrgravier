@@ -1,12 +1,12 @@
 ---
 /** Fiche de sortie affichée en tête d'article : distance, D+, piste, lieu. */
 import type { Ride } from '../lib/rides';
+import { formatNumber as n } from '../lib/site';
 
 interface Props {
   ride: Ride;
 }
 const { ride } = Astro.props;
-const n = (v: number) => v.toLocaleString('fr-FR');
 const stats = [
   ride.distance && { value: n(ride.distance), unit: 'km', label: 'Distance' },
   ride.elevation && { value: n(ride.elevation), unit: 'm', label: 'Dénivelé +' },

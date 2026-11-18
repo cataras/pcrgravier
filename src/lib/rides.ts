@@ -139,8 +139,15 @@ async function loadTrace(type: 'route' | 'trip', id: string, key: string): Promi
   }
 }
 
-/** Fiche complète d'un article : traces RideWithGPS + champs saisis à la main. */
-export async function getRide(article: Article): Promise<Ride | undefined> {
+const rides = new Map<string, Promise<Ride | undefined>>();
+
+/** Fiche complète d'un article : traces RideWithGPS + champs saisis à la main (calculée une fois). */
+export function getRide(article: Article): Promise<Ride | undefined> {
+  if (!rides.has(article.id)) rides.set(article.id, computeRide(article));
+  return rides.get(article.id)!;
+}
+
+async function computeRide(article: Article): Promise<Ride | undefined> {
   const traces = (await Promise.all(rideWithGpsRefs(article.body).map((r) => getTrace(r.type, r.id)))).filter(
     (t): t is Trace => !!t,
   );

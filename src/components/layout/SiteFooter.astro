@@ -1,0 +1,25 @@
+---
+import { getSettings, getArticles, getCategories, url } from '../../lib/site';
+
+const site = await getSettings();
+const recent = (await getArticles()).slice(0, 5);
+const categories = (await getCategories()).filter((c) => c.count);
+---
+
+<footer class="site-footer">
+  <div class="footer-cols">
+    <section>
+      <h2>À propos</h2>
+      <p>{site.description}</p>
+    </section>
+    <section>
+      <h2>Articles récents</h2>
+      <ul>{recent.map((a) => <li><a href={url.entry(a.id)}>{a.data.title}</a></li>)}</ul>
+    </section>
+    <section>
+      <h2>Catégories</h2>
+      <ul>{categories.map((c) => <li><a href={url.category(c.entry.id)}>{c.entry.data.name} ({c.count})</a></li>)}</ul>
+    </section>
+  </div>
+  <p class="copyright">{new Date().getFullYear()} {site.footer}</p>
+</footer>
