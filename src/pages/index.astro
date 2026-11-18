@@ -1,14 +1,19 @@
 ---
+/**
+ * Accueil : tous les récits sur une seule page.
+ *   - filtres par catégorie, sans rechargement (et partageables : /#aventure) ;
+ *   - les 11 premiers récits (2 grands + 3 rangées de 3), puis « Voir plus » par 12.
+ * Sans JavaScript, tous les récits sont simplement affichés.
+ */
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import ArticleGrid from '../components/ArticleGrid.astro';
-import Pagination from '../components/Pagination.astro';
-import { getSettings, PAGE_SIZE, getArticles } from '../lib/site';
+import { getSettings, getArticles, getCategories } from '../lib/site';
 
 const SITE = await getSettings();
 const hero = SITE.hero;
 const articles = await getArticles();
-const last = Math.ceil(articles.length / PAGE_SIZE);
+const categories = (await getCategories()).filter((c) => c.count);
 ---
 
 <Base image={hero} overlayHeader>
@@ -19,6 +24,72 @@ const last = Math.ceil(articles.length / PAGE_SIZE);
       <p class="hero-quote">{SITE.quote}</p>
     </div>
   </section>
-  <ArticleGrid articles={articles.slice(0, PAGE_SIZE)} featureFirst />
-  <Pagination current={1} last={last} />
+
+  <nav class="filters" aria-label="Filtrer les récits par catégorie">
+    <a href="/" data-filter="" aria-pressed="true">Tout <span>{articles.length}</span></a>
+    {categories.map((c) => (
+      <a href={`/category/${c.entry.id}/`} data-filter={c.entry.id} aria-pressed="false">
+        {c.entry.data.name} <span>{c.count}</span>
+      </a>
+    ))}
+  </nav>
+
+  <div id="recits">
+    <ArticleGrid articles={articles} featureFirst />
+  </div>
+  <p class="more-wrap"><button type="button" class="more" hidden>Voir plus de récits</button></p>
 </Base>
+
+<script>
+  const root = document.getElementById('recits')!;
+  // 2 grandes vignettes + 3 rangées de 3, puis des rangées complètes de 3
+  const FIRST = 11;
+  const STEP = 12;
+  const cards = [...root.querySelectorAll<HTMLElement>('.card')];
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('.filters [data-filter]')];
+  const more = document.querySelector<HTMLButtonElement>('.more')!;
+  let shown = FIRST;
+  let filter = '';
+
+  const render = () => {
+    const matching = cards.filter((c) => !filter || c.dataset.categories!.split(' ').includes(filter));
+    cards.forEach((c) => (c.hidden = true));
+    // avec un filtre, tous les récits de la catégorie ; sinon, par paquets
+    const visible = filter ? matching : matching.slice(0, shown);
+    visible.forEach((c) => (c.hidden = false));
+    // les deux grandes vignettes seulement sans filtre
+    root.classList.toggle('filtered', !!filter);
+    more.hidden = visible.length >= matching.length;
+    links.forEach((l) => l.setAttribute('aria-pressed', String(l.dataset.filter === filter)));
+  };
+
+  // animation douce quand le navigateur sait le faire (View Transitions)
+  const update = (fn: () => void) => {
+    const doc = document as Document & { startViewTransition?: (cb: () => void) => unknown };
+    if (doc.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) doc.startViewTransition(fn);
+    else fn();
+  };
+
+  links.forEach((l) =>
+    l.addEventListener('click', (e) => {
+      e.preventDefault();
+      const f = l.dataset.filter!;
+      update(() => {
+        filter = f === filter ? '' : f;
+        history.replaceState(null, '', filter ? `#${filter}` : location.pathname);
+        render();
+      });
+    }),
+  );
+
+  more.addEventListener('click', () => {
+    const first = cards.filter((c) => c.hidden)[0];
+    shown += STEP;
+    render();
+    first?.querySelector('a')?.focus({ preventScroll: true });
+  });
+
+  const fromHash = decodeURIComponent(location.hash.slice(1));
+  if (links.some((l) => l.dataset.filter === fromHash && fromHash)) filter = fromHash;
+  render();
+</script>

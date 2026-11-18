@@ -366,3 +366,29 @@ button[type='submit']:hover, .button:hover { background: var(--accent); color: #
 .video-item h2 a { text-decoration: none; }
 .video-date { margin: 0.3rem 0 0; font-size: 0.9rem; color: var(--muted); }
 .video-item .embed { margin-top: 1.2rem !important; }
+
+/* ------------------------------------------------------------ accueil : filtres et « Voir plus » */
+.filters {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem;
+  padding: 1.6rem 1rem; background: var(--paper);
+}
+.filters a {
+  padding: 0.45rem 1rem; border: 1px solid var(--line); border-radius: 999px;
+  font: 700 0.78rem/1 var(--font-title); text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--ink); text-decoration: none; transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+.filters a span { margin-left: 0.3rem; font-weight: 400; color: var(--muted); }
+.filters a:hover { border-color: var(--ink); color: var(--ink); }
+.filters a[aria-pressed='true'] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.filters a[aria-pressed='true'] span { color: inherit; opacity: 0.7; }
+#recits.filtered .card.large { grid-column: span 2; min-height: 22rem; }
+@media (max-width: 960px) { #recits.filtered .card.large { grid-column: span 3; min-height: 20rem; } }
+@media (max-width: 600px) { #recits.filtered .card.large { grid-column: 1 / -1; min-height: 17rem; } }
+.card[hidden] { display: none; }
+.more-wrap { margin: 0; padding: 2.5rem 1rem 3.5rem; text-align: center; }
+.more-wrap:has(.more[hidden]) { padding: 0 0 1rem; }
+.more {
+  padding: 0.85rem 2rem; border: 1px solid var(--ink); border-radius: 999px; background: none; cursor: pointer;
+  font: 700 0.9rem var(--font-title); text-transform: uppercase; letter-spacing: 0.12em; color: var(--ink);
+}
+.more:hover { background: var(--ink); color: var(--paper); }

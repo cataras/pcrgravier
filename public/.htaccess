@@ -20,6 +20,9 @@ RewriteRule ^ https://pcrgravier.cc%{REQUEST_URI} [R=301,L]
 # Ancien flux RSS WordPress
 RewriteRule ^(comments/)?feed/?$ /rss.xml [R=301,L]
 
+# Ancienne pagination de l'accueil (tous les récits sont maintenant sur l'accueil)
+RewriteRule ^page/[0-9]+/?$ / [R=301,L]
+
 # Pages WordPress supprimées
 RewriteRule ^(page-d-exemple|category/non-classe)/?$ / [R=301,L]
 

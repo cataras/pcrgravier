@@ -12,7 +12,7 @@ const { title, cover } = article.data;
 const category = await mainCategory(article);
 ---
 
-<article class:list={['card', { large }]}>
+<article class:list={['card', { large }]} data-categories={article.data.categories.map((c) => c.id).join(' ')}>
   {cover && (
     <Image
       src={cover}
